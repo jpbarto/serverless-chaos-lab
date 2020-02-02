@@ -1,0 +1,14 @@
+[
+    {
+        "objectName": "input0001a",
+        "submissionDate": "1Feb2020",
+        "color": "blue",
+        "age": 23
+    },
+    {
+        "objectName": "input0001b",
+        "submissionDate": "1Feb2020",
+        "color": "red",
+        "age": 24
+    }
+]
