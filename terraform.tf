@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "chaos_bucket" {
   bucket = "chaos-bucket-${random_id.chaos_stack.hex}"
 }
 
-resource "aws_s3_bucket_notification" "bucket_notification" {
+resource "aws_s3_bucket_notification" "chaos_bucket_notifications" {
   bucket = "${aws_s3_bucket.chaos_bucket.id}"
 
   lambda_function {
@@ -26,6 +26,13 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "input/"
     filter_suffix       = ".json"
+  }
+
+  topic {
+    topic_arn     = "${aws_sns_topic.chaos_topic.arn}"
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = "output/"
+    filter_suffix = ".csv"
   }
 }
 
@@ -136,4 +143,70 @@ resource "aws_ssm_parameter" "chaos_lambda_param" {
   name  = "failureLambdaConfig"
   type  = "String"
   value = "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 400, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}"
+}
+
+#########################################
+#
+# Chaos File Processed topic
+#
+#########################################
+
+resource "aws_sns_topic" "chaos_topic" {
+  name = "chaos-csv-notification-topic-${random_id.chaos_stack.hex}"
+
+  policy = <<POLICY
+{
+    "Version":"2012-10-17",
+    "Statement":[{
+        "Effect": "Allow",
+        "Principal": {"AWS":"*"},
+        "Action": "SNS:Publish",
+        "Resource": "arn:aws:sns:*:*:chaos-csv-notification-topic-${random_id.chaos_stack.hex}",
+        "Condition":{
+            "ArnLike":{"aws:SourceArn":"${aws_s3_bucket.chaos_bucket.arn}"}
+        }
+    }]
+}
+POLICY
+}
+
+#########################################
+#
+# Chaos File Processed topic
+#
+#########################################
+
+resource "aws_sqs_queue" "chaos_csv_queue" {
+  name = "chaos-csv-work-queue-${random_id.chaos_stack.hex}"
+}
+
+resource "aws_sqs_queue_policy" "chaos_queue_policy" {
+  queue_url = "${aws_sqs_queue.chaos_csv_queue.id}"
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Id": "sqspolicy",
+  "Statement": [
+    {
+      "Sid": "First",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "sqs:SendMessage",
+      "Resource": "${aws_sqs_queue.chaos_csv_queue.arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${aws_sns_topic.chaos_topic.arn}"
+        }
+      }
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_sns_topic_subscription" "csv_topic_subscription" {
+  topic_arn = "${aws_sns_topic.chaos_topic.arn}"
+  protocol  = "sqs"
+  endpoint  = "${aws_sqs_queue.chaos_csv_queue.arn}"
 }
