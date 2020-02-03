@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "title": "Delay should not impact processing",
+  "description": "Inject latency into Lambda function execution and ensure files are still processed.",
+  "tags": [
+      "serverless",
+      "cloudnative",
+      "etl"
+  ],
+  "steady-state-hypothesis": {
+      "title": "Services are all available and healthy",
+      "probes": [
+          {
+              "type": "probe",
+              "name": "empty-etl-queue",
+              "tolerance": 0,
+              "provider": {
+                  "type": "python",
+                  "module": "chaosaws.cloudwatch.probes",
+                  "func": "get_metric_statistics",
+                  "arguments": {
+                      "namespace": "AWS/SQS",
+                      "metric_name": "NumberOfMessagesSent",
+                      "dimension_name": "QueueName",
+                      "dimension_value": "chaos-csv-work-queue-23e0fcb0737fba73",
+                      "statistic": "Sum",
+                      "duration": 300
+                  }
+              }
+          }
+      ]
+  },
+  "method": [
+      {
+          "type": "action",
+          "name": "copy-file",
+          "provider": {
+              "type": "process",
+              "path": "submit_input_files.sh",
+              "arguments": "300"
+          },
+          "pauses": {
+              "after": 60
+          }
+      }
+  ],
+  "rollbacks": []
+}
