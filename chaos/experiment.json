@@ -12,19 +12,37 @@
       "probes": [
           {
               "type": "probe",
-              "name": "empty-etl-queue",
+              "name": "zero-sns-errors",
               "tolerance": 0,
               "provider": {
                   "type": "python",
                   "module": "chaosaws.cloudwatch.probes",
                   "func": "get_metric_statistics",
                   "arguments": {
-                      "namespace": "AWS/SQS",
-                      "metric_name": "NumberOfMessagesSent",
-                      "dimension_name": "QueueName",
-                      "dimension_value": "chaos-csv-work-queue-23e0fcb0737fba73",
+                      "namespace": "AWS/SNS",
+                      "metric_name": "NumberOfNotificationsFailed",
+                      "dimension_name": "TopicName",
+                      "dimension_value": "chaos-csv-notification-topic-2aaf25cd21784365",
                       "statistic": "Sum",
-                      "duration": 300
+                      "duration": 3600
+                  }
+              }
+          },
+          {
+              "type": "probe",
+              "name": "zero-lambda-errors",
+              "tolerance": 0,
+              "provider": {
+                  "type": "python",
+                  "module": "chaosaws.cloudwatch.probes",
+                  "func": "get_metric_statistics",
+                  "arguments": {
+                      "namespace": "AWS/Lambda",
+                      "metric_name": "Errors",
+                      "dimension_name": "FunctionName",
+                      "dimension_value": "ChaosTransformer-2aaf25cd21784365",
+                      "statistic": "Sum",
+                      "duration": 3600
                   }
               }
           }
@@ -37,7 +55,7 @@
           "provider": {
               "type": "process",
               "path": "./submit_input_files.sh",
-              "arguments": "300"
+              "arguments": "chaos-bucket-2aaf25cd21784365 300"
           },
           "pauses": {
               "after": 60

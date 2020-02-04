@@ -2,3 +2,8 @@ build
 node_modules
 *.tfstate*
 .terraform
+Pipfile*
+chaostoolkit.log
+journal.json
+tmp_data
+notes.md

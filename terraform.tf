@@ -159,7 +159,9 @@ resource "aws_sns_topic" "chaos_topic" {
     "Version":"2012-10-17",
     "Statement":[{
         "Effect": "Allow",
-        "Principal": {"AWS":"*"},
+        "Principal": {
+          "Service": "s3.amazonaws.com" 
+        },
         "Action": "SNS:Publish",
         "Resource": "arn:aws:sns:*:*:chaos-csv-notification-topic-${random_id.chaos_stack.hex}",
         "Condition":{
@@ -191,7 +193,7 @@ resource "aws_sqs_queue_policy" "chaos_queue_policy" {
     {
       "Sid": "First",
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": { "Service": "sns.amazonaws.com" },
       "Action": "sqs:SendMessage",
       "Resource": "${aws_sqs_queue.chaos_csv_queue.arn}",
       "Condition": {
