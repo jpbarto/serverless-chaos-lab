@@ -259,7 +259,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                   "stacked": false,
                   "region": "eu-west-2",
                   "stat": "Sum",
-                  "period": 300,
+                  "period": 900,
                   "metrics": [
                       [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "${aws_sns_topic.chaos_topic.name}" ],
                       [ ".", "NumberOfNotificationsDelivered", ".", "." ],
