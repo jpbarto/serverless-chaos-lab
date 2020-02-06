@@ -4,15 +4,17 @@ provider "aws" {
     region = "eu-west-2"
 }
 
+data "aws_caller_identity" "current" {}
+
+resource "random_id" "chaos_stack" {
+  byte_length = 8
+}
+
 #########################################
 #
 # S3 bucket for receiving new data inputs
 #
 #########################################
-
-resource "random_id" "chaos_stack" {
-  byte_length = 8
-}
 
 resource "aws_s3_bucket" "chaos_bucket" {
   bucket = "chaos-bucket-${random_id.chaos_stack.hex}"
@@ -104,6 +106,7 @@ resource "aws_lambda_permission" "allow_bucket" {
   function_name = "${aws_lambda_function.chaos_lambda.arn}"
   principal     = "s3.amazonaws.com"
   source_arn    = "${aws_s3_bucket.chaos_bucket.arn}"
+  source_account= "${data.aws_caller_identity.current.account_id}"
 }
 
 data "archive_file" "chaos_lambda_zip" {
@@ -211,4 +214,106 @@ resource "aws_sns_topic_subscription" "csv_topic_subscription" {
   topic_arn = "${aws_sns_topic.chaos_topic.arn}"
   protocol  = "sqs"
   endpoint  = "${aws_sqs_queue.chaos_csv_queue.arn}"
+}
+
+#########################################
+#
+# CloudWatch Dashboard
+#
+#########################################
+
+resource "aws_cloudwatch_dashboard" "chaos_board" {
+  dashboard_name = "chaos-dashboard-${random_id.chaos_stack.hex}"
+
+  dashboard_body = <<EOF
+  {
+      "widgets": [
+          {
+              "type": "metric",
+              "x": 0,
+              "y": 0,
+              "width": 18,
+              "height": 3,
+              "properties": {
+                  "metrics": [
+                      [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}" ],
+                      [ ".", "NumberOfMessagesReceived", ".", "." ],
+                      [ ".", "NumberOfMessagesDeleted", ".", "." ]
+                  ],
+                  "view": "singleValue",
+                  "stacked": false,
+                  "region": "eu-west-2",
+                  "stat": "Sum",
+                  "period": 300,
+                  "title": "SQS Stats"
+              }
+          },
+          {
+              "type": "metric",
+              "x": 0,
+              "y": 3,
+              "width": 18,
+              "height": 3,
+              "properties": {
+                  "view": "singleValue",
+                  "stacked": false,
+                  "region": "eu-west-2",
+                  "stat": "Sum",
+                  "period": 300,
+                  "metrics": [
+                      [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "${aws_sns_topic.chaos_topic.name}" ],
+                      [ ".", "NumberOfNotificationsDelivered", ".", "." ],
+                      [ ".", "NumberOfMessagesPublished", ".", "." ]
+                  ],
+                  "title": "SNS Stats"
+              }
+          },
+          {
+              "type": "metric",
+              "x": 0,
+              "y": 6,
+              "width": 24,
+              "height": 3,
+              "properties": {
+                  "metrics": [
+                      [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "stat": "Average" } ],
+                      [ ".", "Errors", ".", "." ],
+                      [ ".", "Invocations", ".", "." ],
+                      [ ".", "Throttles", ".", "." ],
+                      [ ".", "ConcurrentExecutions", ".", ".", { "stat": "Average" } ]
+                  ],
+                  "view": "singleValue",
+                  "stacked": false,
+                  "region": "eu-west-2",
+                  "stat": "Sum",
+                  "period": 300,
+                  "title": "Lambda Stats"
+              }
+          },
+          {
+              "type": "metric",
+              "x": 0,
+              "y": 9,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                  "view": "singleValue",
+                  "stacked": false,
+                  "region": "eu-west-2",
+                  "stat": "Sum",
+                  "period": 300,
+                  "metrics": [
+                      [ "AWS/S3", "4xxErrors", "BucketName", "${aws_s3_bucket.chaos_bucket.bucket}", "FilterId", "input-filter" ],
+                      [ ".", "5xxErrors", ".", ".", ".", "." ],
+                      [ ".", "PutRequests", ".", ".", ".", "." ],
+                      [ "...", "output-filter" ],
+                      [ ".", "5xxErrors", ".", ".", ".", "." ],
+                      [ ".", "4xxErrors", ".", ".", ".", "." ]
+                  ],
+                  "title": "S3 Stats"
+              }
+          }
+      ]
+  }
+  EOF
 }
