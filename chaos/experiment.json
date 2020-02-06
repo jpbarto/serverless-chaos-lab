@@ -7,6 +7,20 @@
       "cloudnative",
       "etl"
   ],
+  "configuration": {
+      "s3_bucket": {
+          "type": "env",
+          "key": "S3_BUCKET"
+      },
+      "sns_topic": {
+          "type": "env",
+          "key": "SNS_TOPIC"
+      },
+      "lambda_function": {
+          "type": "env",
+          "key": "LAMBDA_FUNCTION"
+      }
+  },
   "steady-state-hypothesis": {
       "title": "Services are all available and healthy",
       "probes": [
@@ -22,7 +36,7 @@
                       "namespace": "AWS/SNS",
                       "metric_name": "NumberOfNotificationsFailed",
                       "dimension_name": "TopicName",
-                      "dimension_value": "chaos-csv-notification-topic-2aaf25cd21784365",
+                      "dimension_value": "${sns_topic}",
                       "statistic": "Sum",
                       "duration": 3600
                   }
@@ -40,7 +54,7 @@
                       "namespace": "AWS/Lambda",
                       "metric_name": "Errors",
                       "dimension_name": "FunctionName",
-                      "dimension_value": "ChaosTransformer-2aaf25cd21784365",
+                      "dimension_value": "${lambda_function}",
                       "statistic": "Sum",
                       "duration": 3600
                   }
@@ -55,7 +69,7 @@
           "provider": {
               "type": "process",
               "path": "./submit_input_files.sh",
-              "arguments": "chaos-bucket-2aaf25cd21784365 300"
+              "arguments": "${s3_bucket} 300"
           },
           "pauses": {
               "after": 60

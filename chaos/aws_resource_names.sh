@@ -1,0 +1,4 @@
+SNS_TOPIC=chaos-csv-notification-topic-c7953a0aac2ce3fd
+LAMBDA_FUNCTION=ChaosTransformer-c7953a0aac2ce3fd
+S3_BUCKET=chaos-bucket-c7953a0aac2ce3fd
+export SNS_TOPIC LAMBDA_FUNCTION S3_BUCKET
