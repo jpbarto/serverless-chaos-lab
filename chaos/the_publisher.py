@@ -19,7 +19,7 @@ obj_limit = 2 # number of objects per second to put
 start_time = time ()
 last_print_time = time ()
 while run_flag:
-    obj_name = 'data_object_{}_{}.csv'.format (dt.now ().strftime ('%d%b%Y'), int(time ()*1000))
+    obj_name = 'data_object_{}_{}.json'.format (dt.now ().strftime ('%d%b%Y'), int(time ()*1000))
     data = {'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
 
     if iter_obj_count <= obj_limit * 10:
