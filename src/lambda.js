@@ -3,7 +3,7 @@ const failureLambda = require('failure-lambda');
 var AWS = require('aws-sdk');
 const { parse } = require('json2csv');
 
-const fields = ['objectName', 'submissionDate', 'color', 'age'];
+const fields = ['objectName', 'submissionDate', 'author', 'formatVersion'];
 const opts = { "fields": fields };
 
 
