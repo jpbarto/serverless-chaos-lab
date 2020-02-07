@@ -30,6 +30,7 @@ exports.handler = failureLambda(async (event, context, callback) => {
         const result = await s3.putObject({ Bucket: dstBucket, Key: dstKey, Body: csvData, ContentType: 'text/csv' }).promise ();
     } catch (err) {
         console.error(err);
+        callback (err);
     }
 
 
@@ -39,5 +40,5 @@ exports.handler = failureLambda(async (event, context, callback) => {
     };
 
     console.log ("Object processed");
-    callback(null, response);
+    callback (null, response);
 });
