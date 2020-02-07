@@ -1,7 +1,7 @@
 # https://www.terraform.io/downloads.html
 
 provider "aws" {
-    region = "eu-west-2"
+  region = "eu-west-2"
 }
 
 data "aws_caller_identity" "current" {}
@@ -88,6 +88,13 @@ resource "aws_iam_role_policy" "chaos_policy" {
       },
       {
         "Action": [
+          "sqs:SendMessage"
+        ],
+        "Effect": "Allow",
+        "Resource": "${aws_sqs_queue.chaos_error_queue.arn}"
+      },
+      {
+        "Action": [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -101,12 +108,12 @@ resource "aws_iam_role_policy" "chaos_policy" {
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
-  statement_id  = "AllowExecutionFromS3Bucket"
-  action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.chaos_lambda.arn}"
-  principal     = "s3.amazonaws.com"
-  source_arn    = "${aws_s3_bucket.chaos_bucket.arn}"
-  source_account= "${data.aws_caller_identity.current.account_id}"
+  statement_id   = "AllowExecutionFromS3Bucket"
+  action         = "lambda:InvokeFunction"
+  function_name  = "${aws_lambda_function.chaos_lambda.arn}"
+  principal      = "s3.amazonaws.com"
+  source_arn     = "${aws_s3_bucket.chaos_bucket.arn}"
+  source_account = "${data.aws_caller_identity.current.account_id}"
 }
 
 data "archive_file" "chaos_lambda_zip" {
@@ -116,23 +123,28 @@ data "archive_file" "chaos_lambda_zip" {
 }
 
 resource "aws_lambda_function" "chaos_lambda" {
-    filename = "build/chaos_lambda.zip"
-    source_code_hash = filebase64sha256("build/chaos_lambda.zip")
-    function_name = "ChaosTransformer-${random_id.chaos_stack.hex}"
-    handler = "lambda.handler"
-    memory_size = 128
-    role = aws_iam_role.chaos_lambda_role.arn
-    runtime = "nodejs12.x"
-    timeout = 3
-    environment {
-        variables = {
-            FAILURE_INJECTION_PARAM = "failureLambdaConfig"
-        }
-    }
+  filename         = "build/chaos_lambda.zip"
+  source_code_hash = filebase64sha256("build/chaos_lambda.zip")
+  function_name    = "ChaosTransformer-${random_id.chaos_stack.hex}"
+  handler          = "lambda.handler"
+  memory_size      = 128
+  role             = aws_iam_role.chaos_lambda_role.arn
+  runtime          = "nodejs12.x"
+  timeout          = 3
 
-    tracing_config {
-        mode = "PassThrough"
+  dead_letter_config {
+    target_arn = "${aws_sqs_queue.chaos_error_queue.arn}"
+  }
+
+  environment {
+    variables = {
+      FAILURE_INJECTION_PARAM = "failureLambdaConfig"
     }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
 
 }
 
@@ -180,6 +192,10 @@ POLICY
 # Chaos File Processed topic
 #
 #########################################
+
+resource "aws_sqs_queue" "chaos_error_queue" {
+  name = "chaos-error-queue-${random_id.chaos_stack.hex}"
+}
 
 resource "aws_sqs_queue" "chaos_csv_queue" {
   name = "chaos-csv-work-queue-${random_id.chaos_stack.hex}"
@@ -255,11 +271,31 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
               "width": 18,
               "height": 3,
               "properties": {
+                  "metrics": [
+                      [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_error_queue.name}" ],
+                      [ ".", "NumberOfMessagesReceived", ".", "." ],
+                      [ ".", "NumberOfMessagesDeleted", ".", "." ]
+                  ],
                   "view": "singleValue",
                   "stacked": false,
                   "region": "eu-west-2",
                   "stat": "Sum",
-                  "period": 900,
+                  "period": 300,
+                  "title": "ETL Error Stats"
+              }
+          },
+          {
+              "type": "metric",
+              "x": 0,
+              "y": 6,
+              "width": 18,
+              "height": 3,
+              "properties": {
+                  "view": "singleValue",
+                  "stacked": false,
+                  "region": "eu-west-2",
+                  "stat": "Sum",
+                  "period": 300,
                   "metrics": [
                       [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "${aws_sns_topic.chaos_topic.name}" ],
                       [ ".", "NumberOfNotificationsDelivered", ".", "." ],
@@ -271,7 +307,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
           {
               "type": "metric",
               "x": 0,
-              "y": 6,
+              "y": 9,
               "width": 24,
               "height": 3,
               "properties": {
@@ -293,7 +329,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
           {
               "type": "metric",
               "x": 0,
-              "y": 9,
+              "y": 12,
               "width": 24,
               "height": 6,
               "properties": {
