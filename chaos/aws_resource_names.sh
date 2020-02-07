@@ -1,4 +1,4 @@
-CHAOS_STACK_ID=b03cbd74dfd934b8
+CHAOS_STACK_ID=3c0ad6c72e1a8097
 
 SNS_TOPIC=chaos-csv-notification-topic-$CHAOS_STACK_ID
 SQS_QUEUE=chaos-csv-work-queue-$CHAOS_STACK_ID
