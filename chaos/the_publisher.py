@@ -4,6 +4,7 @@ import boto3
 from time import time
 from datetime import datetime as dt
 import json
+from random import random
 import os
 
 S3_BUCKET_NAME = os.environ['S3_BUCKET']
@@ -16,6 +17,7 @@ run_flag = True
 obj_count = 0
 iter_obj_count = 0
 obj_limit = 2 # number of objects per second to put
+err_rate = 0.0 # what percentage of messages should be flawed, 0.1 == 10% of messages will have syntax errors
 start_time = time ()
 last_print_time = time ()
 while run_flag:
@@ -23,7 +25,10 @@ while run_flag:
     data = {'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
 
     if iter_obj_count <= obj_limit * 10:
-        s3.put_object(Body=json.dumps (data), Bucket=S3_BUCKET_NAME, Key='input/{}'.format (obj_name))
+        body = json.dumps (data)
+        if random () < err_rate:
+            body = body.replace ('"','',1) # if we should inject an erroneous message send malformed JSON with a syntax error
+        s3.put_object(Body=body, Bucket=S3_BUCKET_NAME, Key='input/{}'.format (obj_name))
         obj_count += 1
         iter_obj_count += 1
 
