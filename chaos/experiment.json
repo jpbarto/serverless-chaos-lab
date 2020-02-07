@@ -38,7 +38,7 @@
                       "dimension_name": "TopicName",
                       "dimension_value": "${sns_topic}",
                       "statistic": "Sum",
-                      "duration": 3600
+                      "duration": 900
                   }
               }
           },
@@ -56,7 +56,7 @@
                       "dimension_name": "FunctionName",
                       "dimension_value": "${lambda_function}",
                       "statistic": "Sum",
-                      "duration": 3600
+                      "duration": 300
                   }
               }
           }
@@ -65,16 +65,26 @@
   "method": [
       {
           "type": "action",
-          "name": "copy-file",
+          "name": "Enable Lambda failure: LATENCY",
           "provider": {
               "type": "process",
-              "path": "./submit_input_files.sh",
-              "arguments": "${s3_bucket} 300"
+              "path": "aws",
+              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 3000, \"maxLatency\": 4000, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}'"
           },
           "pauses": {
               "after": 60
           }
       }
   ],
-  "rollbacks": []
+  "rollbacks": [
+      {
+          "type": "action",
+          "name": "Disable Lambda failures",
+          "provider": {
+              "type": "process",
+              "path": "aws",
+              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 30, \"maxLatency\": 40, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}'"
+          }
+      }
+  ]
 }
