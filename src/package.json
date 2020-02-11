@@ -1,0 +1,30 @@
+{
+  "name": "lambda_handler",
+  "version": "1.0.0",
+  "description": "Simple serverless ETL Lambda function",
+  "main": "lambda.js",
+  "dependencies": {
+    "failure-lambda": "^0.1.0",
+    "aws-sdk": "^2.610.0",
+    "json2csv": "^4.5.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpbarto/serverless-chaos-lab.git"
+  },
+  "keywords": [
+    "serverless",
+    "chaos",
+    "etl"
+  ],
+  "author": "Jason Barto",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jpbarto/serverless-chaos-lab/issues"
+  },
+  "homepage": "https://github.com/jpbarto/serverless-chaos-lab#readme"
+}
