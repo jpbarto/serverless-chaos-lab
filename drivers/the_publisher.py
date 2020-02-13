@@ -5,9 +5,8 @@ from time import time
 from datetime import datetime as dt
 import json
 from random import random
-import os
 
-S3_BUCKET_NAME = os.environ['S3_BUCKET']
+from aws_resource_names import S3_BUCKET_NAME
 
 # Method 2: Client.put_object()
 s3 = boto3.client('s3')

@@ -353,3 +353,17 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
   }
   EOF
 }
+
+#########################################
+#
+# Outputs
+#
+#########################################
+
+resource "local_file" "driver_variables" {
+  filename = "${path.module}/drivers/aws_resource_names.py"
+  content = <<EOF
+SQS_QUEUE_NAME="${aws_sqs_queue.chaos_csv_queue.name}"
+S3_BUCKET_NAME="${aws_s3_bucket.chaos_bucket.bucket}"
+EOF
+}

@@ -4,12 +4,11 @@ import boto3
 from time import time
 from datetime import datetime as dt
 import json
-import os
 
-SQS_QUEUE = os.environ['SQS_QUEUE']
+from aws_resource_names import SQS_QUEUE_NAME
 
 sqs = boto3.client('sqs')
-queue_url = sqs.get_queue_url (QueueName=SQS_QUEUE)
+queue_url = sqs.get_queue_url (QueueName=SQS_QUEUE_NAME)
 queue_url = queue_url['QueueUrl']
 
 run_flag = True
