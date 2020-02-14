@@ -24,7 +24,7 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
 
  1. Visit the dashboard for the ETL pipeline using the [AWS CloudWatch Console](https://console.aws.amazon.com/cloudwatch/home?#dashboards:).  Look for and open the dashboard with a name such as `chaos-dashboard-3c0ad6c72e1a1234`.
 
- ![Empty CloudWatch Dashboard](images/empty_cw_dashboard.png)
+     ![Empty CloudWatch Dashboard](images/empty_cw_dashboard.png)
 
  1. Review the ETL Lambda function via the [AWS Lambda console](https://console.aws.amazon.com/lambda/home?#/functions).
 
@@ -35,3 +35,4 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
      $ ./the_publisher &
      $ ./the_subscriber &
      ``` 
+
