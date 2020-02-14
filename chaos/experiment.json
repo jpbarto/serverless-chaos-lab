@@ -10,15 +10,15 @@
   "configuration": {
       "s3_bucket": {
           "type": "env",
-          "key": "S3_BUCKET"
+          "key": "S3_BUCKET_NAME"
       },
       "sns_topic": {
           "type": "env",
-          "key": "SNS_TOPIC"
+          "key": "SNS_TOPIC_NAME"
       },
       "lambda_function": {
           "type": "env",
-          "key": "LAMBDA_FUNCTION"
+          "key": "LAMBDA_FUNCTION_NAME"
       }
   },
   "steady-state-hypothesis": {
