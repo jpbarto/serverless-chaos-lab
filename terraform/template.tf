@@ -1,4 +1,6 @@
-# https://www.terraform.io/downloads.html
+terraform {
+  required_version = ">= 0.12"
+}
 
 provider "aws" {
   region = "eu-west-2"
