@@ -389,3 +389,54 @@ LAMBDA_FUNCTION_NAME="${aws_lambda_function.chaos_lambda.function_name}"
 export SQS_QUEUE_NAME SNS_TOPIC_NAME S3_BUCKET_NAME LAMBDA_FUNCTION_NAME
 EOF
 }
+
+resource "local_file" "steady_state_metric" {
+  filename = "${path.module}/../chaos/steadyStateMetric.json"
+  content = <<EOF
+[
+    {
+        "Id": "pctFlight",
+        "Expression": "((lambdaInvokes - sqsMsgCount) / lambdaInvokes)*100",
+        "Label": "PercentInFlight"
+    },
+    {
+        "Id": "lambdaInvokes",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/Lambda",
+                "MetricName": "Invocations",
+                "Dimensions": [
+                    {
+                        "Name": "FunctionName",
+                        "Value": "${aws_lambda_function.chaos_lambda.function_name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    },
+    {
+        "Id": "sqsMsgCount",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/SQS",
+                "MetricName": "NumberOfMessagesSent",
+                "Dimensions": [
+                    {
+                        "Name": "QueueName",
+                        "Value": "${aws_sqs_queue.chaos_csv_queue.name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    }
+]
+EOF
+}
