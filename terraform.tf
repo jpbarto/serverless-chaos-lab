@@ -4,7 +4,8 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {
+}
 
 resource "random_id" "chaos_stack" {
   byte_length = 8
@@ -21,17 +22,17 @@ resource "aws_s3_bucket" "chaos_bucket" {
 }
 
 resource "aws_s3_bucket_notification" "chaos_bucket_notifications" {
-  bucket = "${aws_s3_bucket.chaos_bucket.id}"
+  bucket = aws_s3_bucket.chaos_bucket.id
 
   lambda_function {
-    lambda_function_arn = "${aws_lambda_function.chaos_lambda.arn}"
+    lambda_function_arn = aws_lambda_function.chaos_lambda.arn
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "input/"
     filter_suffix       = ".json"
   }
 
   topic {
-    topic_arn     = "${aws_sns_topic.chaos_topic.arn}"
+    topic_arn     = aws_sns_topic.chaos_topic.arn
     events        = ["s3:ObjectCreated:*"]
     filter_prefix = "output/"
     filter_suffix = ".csv"
@@ -61,6 +62,7 @@ resource "aws_iam_role" "chaos_lambda_role" {
   ]
 }
 EOF
+
 }
 
 resource "aws_iam_role_policy" "chaos_policy" {
@@ -104,16 +106,17 @@ resource "aws_iam_role_policy" "chaos_policy" {
       }
     ]
   }
-  EOF
+EOF
+
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
   statement_id   = "AllowExecutionFromS3Bucket"
   action         = "lambda:InvokeFunction"
-  function_name  = "${aws_lambda_function.chaos_lambda.arn}"
+  function_name  = aws_lambda_function.chaos_lambda.arn
   principal      = "s3.amazonaws.com"
-  source_arn     = "${aws_s3_bucket.chaos_bucket.arn}"
-  source_account = "${data.aws_caller_identity.current.account_id}"
+  source_arn     = aws_s3_bucket.chaos_bucket.arn
+  source_account = data.aws_caller_identity.current.account_id
 }
 
 data "archive_file" "chaos_lambda_zip" {
@@ -133,7 +136,7 @@ resource "aws_lambda_function" "chaos_lambda" {
   timeout          = 3
 
   dead_letter_config {
-    target_arn = "${aws_sqs_queue.chaos_error_queue.arn}"
+    target_arn = aws_sqs_queue.chaos_error_queue.arn
   }
 
   environment {
@@ -145,7 +148,6 @@ resource "aws_lambda_function" "chaos_lambda" {
   tracing_config {
     mode = "PassThrough"
   }
-
 }
 
 #########################################
@@ -185,6 +187,7 @@ resource "aws_sns_topic" "chaos_topic" {
     }]
 }
 POLICY
+
 }
 
 #########################################
@@ -202,7 +205,7 @@ resource "aws_sqs_queue" "chaos_csv_queue" {
 }
 
 resource "aws_sqs_queue_policy" "chaos_queue_policy" {
-  queue_url = "${aws_sqs_queue.chaos_csv_queue.id}"
+  queue_url = aws_sqs_queue.chaos_csv_queue.id
 
   policy = <<POLICY
 {
@@ -224,12 +227,13 @@ resource "aws_sqs_queue_policy" "chaos_queue_policy" {
   ]
 }
 POLICY
+
 }
 
 resource "aws_sns_topic_subscription" "csv_topic_subscription" {
-  topic_arn = "${aws_sns_topic.chaos_topic.arn}"
+  topic_arn = aws_sns_topic.chaos_topic.arn
   protocol  = "sqs"
-  endpoint  = "${aws_sqs_queue.chaos_csv_queue.arn}"
+  endpoint  = aws_sqs_queue.chaos_csv_queue.arn
 }
 
 #########################################
@@ -351,7 +355,9 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
           }
       ]
   }
-  EOF
+  
+EOF
+
 }
 
 #########################################
@@ -362,8 +368,10 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
 
 resource "local_file" "driver_variables" {
   filename = "${path.module}/drivers/aws_resource_names.py"
-  content = <<EOF
+  content  = <<EOF
 SQS_QUEUE_NAME="${aws_sqs_queue.chaos_csv_queue.name}"
 S3_BUCKET_NAME="${aws_s3_bucket.chaos_bucket.bucket}"
 EOF
+
 }
+
