@@ -17,6 +17,7 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
  1. Using the Terraform cli, deploy the architecture
 
     ```bash
+    $ cd terraform
     $ terraform init
     $ terraform apply .
     ```
@@ -30,7 +31,7 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
  1. To begin sending files through the pipeline execute the two driver programs provided for you in the `drivers` directory:
 
      ```bash
-     $ cd drivers
+     $ cd ../drivers
      $ ./the_publisher &
      $ ./the_subscriber &
      ``` 
