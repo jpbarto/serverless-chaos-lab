@@ -8,24 +8,23 @@ The following series of workshops will walk you through the process of creating 
 
 ```shell
 ├── README.md                       # Introduction (this doc)
+├── chaos                           # directory for chaos experiments
+│   ├── Pipfile                     # Pipenv configuration file
+│   ├── percentInFlight.json        # Cloudwatch metric defining SLO
+│   └── experiment.json             # Chaos experiments #1 and #2
 ├── docs                            # Lab guides
 │   ├── lab_1_serverless_etl.md
 │   ├── lab_2_inject_fault.md
 │   ├── lab_3_chaos_experiment.md
 │   └── lab_4_chaos_experiment_2.md
-├── chaos                           # directory for chaos experiments
-│   ├── Pipfile                     # Pipenv configuration file
-│   ├── aws_resource_names.sh       # environment variable definitions
-│   ├── bad_data.json
-│   ├── experiment.json             # chaos experiment #1
-│   ├── percentInFlight.json        # Cloudwatch metric defining SLO
-│   ├── sample_data.json
-│   ├── the_publisher.py            # publication driver for pipeline
-│   └── the_subscriber.py           # subscription driver for pipeline
-├── src
+├── drivers
+│   ├── the_publisher.py            # Publication driver for pipeline
+│   └── the_subscriber.py           # Subscription driver for pipeline
+└── src
 │   ├── lambda.js                   # NodeJS code for ETL Lambda
 │   └── package.json                # ETL dependencies
-└── terraform.tf                    # Terraform template to create pipeline
+└── terraform
+    └── template.tf                 # Terraform template to create the ETL pipeline
 ```
 
 ## Chaos Engineering
