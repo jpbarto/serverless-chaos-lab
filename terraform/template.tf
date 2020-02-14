@@ -122,14 +122,14 @@ resource "aws_lambda_permission" "allow_bucket" {
 }
 
 data "archive_file" "chaos_lambda_zip" {
-  source_dir  = "${path.module}/src/"
-  output_path = "${path.module}/build/chaos_lambda.zip"
+  source_dir  = "${path.module}/../src/"
+  output_path = "${path.module}/../build/chaos_lambda.zip"
   type        = "zip"
 }
 
 resource "aws_lambda_function" "chaos_lambda" {
-  filename         = "build/chaos_lambda.zip"
-  source_code_hash = filebase64sha256("build/chaos_lambda.zip")
+  filename         = "${path.module}/../build/chaos_lambda.zip"
+  source_code_hash = filebase64sha256("${path.module}/../build/chaos_lambda.zip")
   function_name    = "ChaosTransformer-${random_id.chaos_stack.hex}"
   handler          = "lambda.handler"
   memory_size      = 128
@@ -369,7 +369,7 @@ EOF
 #########################################
 
 resource "local_file" "driver_variables" {
-  filename = "${path.module}/drivers/aws_resource_names.py"
+  filename = "${path.module}/../drivers/aws_resource_names.py"
   content  = <<EOF
 SQS_QUEUE_NAME="${aws_sqs_queue.chaos_csv_queue.name}"
 S3_BUCKET_NAME="${aws_s3_bucket.chaos_bucket.bucket}"
