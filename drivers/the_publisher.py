@@ -16,7 +16,7 @@ run_flag = True
 obj_count = 0
 iter_obj_count = 0
 obj_limit = 2 # number of objects per second to put
-err_rate = 0.0 # what percentage of messages should be flawed, 0.1 == 10% of messages will have syntax errors
+err_rate = 0.01 # what percentage of messages should be flawed, 0.1 == 10% of messages will have syntax errors
 start_time = time ()
 last_print_time = time ()
 while run_flag:
