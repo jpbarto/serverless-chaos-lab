@@ -6,8 +6,8 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-data "aws_caller_identity" "current" {
-}
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 resource "random_id" "chaos_stack" {
   byte_length = 8
@@ -248,116 +248,113 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
   dashboard_name = "chaos-dashboard-${random_id.chaos_stack.hex}"
 
   dashboard_body = <<EOF
-  {
-      "widgets": [
-          {
-              "type": "metric",
-              "x": 0,
-              "y": 0,
-              "width": 18,
-              "height": 3,
-              "properties": {
-                  "metrics": [
-                      [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}" ],
-                      [ ".", "NumberOfMessagesReceived", ".", "." ],
-                      [ ".", "NumberOfMessagesDeleted", ".", "." ]
-                  ],
-                  "view": "singleValue",
-                  "stacked": false,
-                  "region": "eu-west-2",
-                  "stat": "Sum",
-                  "period": 300,
-                  "title": "SQS Stats"
-              }
-          },
-          {
-              "type": "metric",
-              "x": 0,
-              "y": 3,
-              "width": 18,
-              "height": 3,
-              "properties": {
-                  "metrics": [
-                      [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_error_queue.name}" ],
-                      [ ".", "NumberOfMessagesReceived", ".", "." ],
-                      [ ".", "NumberOfMessagesDeleted", ".", "." ]
-                  ],
-                  "view": "singleValue",
-                  "stacked": false,
-                  "region": "eu-west-2",
-                  "stat": "Sum",
-                  "period": 300,
-                  "title": "ETL Error Stats"
-              }
-          },
-          {
-              "type": "metric",
-              "x": 0,
-              "y": 6,
-              "width": 18,
-              "height": 3,
-              "properties": {
-                  "view": "singleValue",
-                  "stacked": false,
-                  "region": "eu-west-2",
-                  "stat": "Sum",
-                  "period": 300,
-                  "metrics": [
-                      [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "${aws_sns_topic.chaos_topic.name}" ],
-                      [ ".", "NumberOfNotificationsDelivered", ".", "." ],
-                      [ ".", "NumberOfMessagesPublished", ".", "." ]
-                  ],
-                  "title": "SNS Stats"
-              }
-          },
-          {
-              "type": "metric",
-              "x": 0,
-              "y": 9,
-              "width": 24,
-              "height": 3,
-              "properties": {
-                  "metrics": [
-                      [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "stat": "Average" } ],
-                      [ ".", "Errors", ".", "." ],
-                      [ ".", "Invocations", ".", "." ],
-                      [ ".", "Throttles", ".", "." ],
-                      [ ".", "ConcurrentExecutions", ".", ".", { "stat": "Average" } ]
-                  ],
-                  "view": "singleValue",
-                  "stacked": false,
-                  "region": "eu-west-2",
-                  "stat": "Sum",
-                  "period": 300,
-                  "title": "Lambda Stats"
-              }
-          },
-          {
-              "type": "metric",
-              "x": 0,
-              "y": 12,
-              "width": 24,
-              "height": 6,
-              "properties": {
-                  "view": "singleValue",
-                  "stacked": false,
-                  "region": "eu-west-2",
-                  "stat": "Sum",
-                  "period": 300,
-                  "metrics": [
-                      [ "AWS/S3", "4xxErrors", "BucketName", "${aws_s3_bucket.chaos_bucket.bucket}", "FilterId", "input-filter" ],
-                      [ ".", "5xxErrors", ".", ".", ".", "." ],
-                      [ ".", "PutRequests", ".", ".", ".", "." ],
-                      [ "...", "output-filter" ],
-                      [ ".", "5xxErrors", ".", ".", ".", "." ],
-                      [ ".", "4xxErrors", ".", ".", ".", "." ]
-                  ],
-                  "title": "S3 Stats"
-              }
-          }
-      ]
-  }
-  
+{
+    "widgets": [
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 3,
+            "width": 18,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}" ],
+                    [ ".", "NumberOfMessagesReceived", ".", "." ],
+                    [ ".", "NumberOfMessagesDeleted", ".", "." ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "${data.aws_region.current.name}",
+                "stat": "Sum",
+                "period": 300,
+                "title": "SQS Stats"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 6,
+            "width": 18,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_error_queue.name}" ],
+                    [ ".", "NumberOfMessagesReceived", ".", "." ],
+                    [ ".", "NumberOfMessagesDeleted", ".", "." ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "${data.aws_region.current.name}",
+                "stat": "Sum",
+                "period": 300,
+                "title": "ETL Error Stats"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 9,
+            "width": 18,
+            "height": 3,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "region": "${data.aws_region.current.name}",
+                "stat": "Sum",
+                "period": 300,
+                "metrics": [
+                    [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "${aws_sns_topic.chaos_topic.name}" ],
+                    [ ".", "NumberOfNotificationsDelivered", ".", "." ],
+                    [ ".", "NumberOfMessagesPublished", ".", "." ]
+                ],
+                "title": "SNS Stats"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 12,
+            "width": 24,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "stat": "Average" } ],
+                    [ ".", "Errors", ".", "." ],
+                    [ ".", "Invocations", ".", "." ],
+                    [ ".", "Throttles", ".", "." ],
+                    [ ".", "ConcurrentExecutions", ".", ".", { "stat": "Average" } ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "${data.aws_region.current.name}",
+                "stat": "Sum",
+                "period": 300,
+                "title": "Lambda Stats"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "((m1 - m2)/m1)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(m3/m1)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m1", "visible": false } ],
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
+                    [ "...", "${aws_sqs_queue.chaos_error_queue.name}", { "id": "m3", "visible": false } ]
+                ],
+                "view": "singleValue",
+                "region": "${data.aws_region.current.name}",
+                "stat": "Sum",
+                "period": 300,
+                "title": "Pipeline Stats"
+            }
+        }
+    ]
+}
 EOF
 
 }
