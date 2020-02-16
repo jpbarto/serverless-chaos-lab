@@ -75,18 +75,6 @@
   "method": [
       {
           "type": "action",
-          "name": "Enable Lambda failure: LATENCY",
-          "provider": {
-              "type": "process",
-              "path": "aws",
-              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 3000, \"maxLatency\": 4000, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}'"
-          },
-          "pauses": {
-              "after": 360
-          }
-      },
-      {
-          "type": "action",
           "name": "Enable Lambda failure: EXCEPTION",
           "provider": {
               "type": "process",
