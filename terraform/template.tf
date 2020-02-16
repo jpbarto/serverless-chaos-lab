@@ -254,7 +254,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "type": "metric",
             "x": 0,
             "y": 3,
-            "width": 18,
+            "width": 12,
             "height": 3,
             "properties": {
                 "metrics": [
@@ -272,9 +272,9 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
         },
         {
             "type": "metric",
-            "x": 0,
-            "y": 6,
-            "width": 18,
+            "x": 12,
+            "y": 3,
+            "width": 12,
             "height": 3,
             "properties": {
                 "metrics": [
@@ -293,13 +293,13 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
         {
             "type": "metric",
             "x": 0,
-            "y": 9,
-            "width": 18,
+            "y": 6,
+            "width": 24,
             "height": 3,
             "properties": {
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current.name}",
+                "region": "eu-west-2",
                 "stat": "Sum",
                 "period": 300,
                 "metrics": [
@@ -313,7 +313,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
         {
             "type": "metric",
             "x": 0,
-            "y": 12,
+            "y": 9,
             "width": 24,
             "height": 3,
             "properties": {
@@ -336,7 +336,29 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "type": "metric",
             "x": 0,
             "y": 0,
-            "width": 24,
+            "width": 15,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "((m1 - m2)/m1)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(m3/m1)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m1", "visible": false } ],
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
+                    [ "...", "${aws_sqs_queue.chaos_error_queue.name}", { "id": "m3", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "region": "${data.aws_region.current.name}",
+                "stat": "Sum",
+                "period": 300,
+                "title": "Pipeline Trend",
+                "stacked": false
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 0,
+            "width": 9,
             "height": 3,
             "properties": {
                 "metrics": [
@@ -350,7 +372,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                 "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
-                "title": "Pipeline Stats"
+                "title": "Pipeline Point in Time"
             }
         }
     ]
@@ -387,8 +409,8 @@ export SQS_QUEUE_NAME SNS_TOPIC_NAME S3_BUCKET_NAME LAMBDA_FUNCTION_NAME
 EOF
 }
 
-resource "local_file" "steady_state_metric" {
-  filename = "${path.module}/../chaos/steadyStateMetric.json"
+resource "local_file" "steady_state_flight" {
+  filename = "${path.module}/../chaos/steadyStateFlight.json"
   content = <<EOF
 [
     {
@@ -425,6 +447,57 @@ resource "local_file" "steady_state_metric" {
                     {
                         "Name": "QueueName",
                         "Value": "${aws_sqs_queue.chaos_csv_queue.name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    }
+]
+EOF
+}
+
+resource "local_file" "steady_state_error" {
+  filename = "${path.module}/../chaos/steadyStateError.json"
+  content = <<EOF
+[
+    {
+        "Id": "pctError",
+        "Expression": "(sqsErrCount / lambdaInvokes)*100",
+        "Label": "PercentInError"
+    },
+    {
+        "Id": "lambdaInvokes",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/Lambda",
+                "MetricName": "Invocations",
+                "Dimensions": [
+                    {
+                        "Name": "FunctionName",
+                        "Value": "${aws_lambda_function.chaos_lambda.function_name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    },
+    {
+        "Id": "sqsErrCount",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/SQS",
+                "MetricName": "NumberOfMessagesSent",
+                "Dimensions": [
+                    {
+                        "Name": "QueueName",
+                        "Value": "${aws_sqs_queue.chaos_error_queue.name}"
                     }
                 ]
             },
