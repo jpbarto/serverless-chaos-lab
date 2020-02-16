@@ -4,8 +4,8 @@
   "description": "Simple serverless ETL Lambda function",
   "main": "lambda.js",
   "dependencies": {
-    "failure-lambda": "^0.1.0",
-    "aws-sdk": "^2.610.0",
+    "aws-sdk": "^2.619.0",
+    "failure-lambda": "^0.1.1",
     "json2csv": "^4.5.4"
   },
   "devDependencies": {},
