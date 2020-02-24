@@ -11,6 +11,25 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
 
  ---
 
+## Prepare the environment
+
+1. If not done yet, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
+
+1. Clone the repository locally.
+
+    ```bash
+    $ git clone https://github.com/jpbarto/serverless-chaos-lab
+    $ cd serverless-chaos-lab
+    ```
+
+1. Package the lambda function.
+
+   ```bash
+   $ mkdir build
+   $ cd src/
+   $ zip ../build/chaos_lambda.zip lambda.js package.json
+   ```
+
  ## Create the pipeline
 
  **Step-by-step**
@@ -32,9 +51,14 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
 
      ```bash
      $ cd ../drivers
-     $ ./the_publisher &
-     $ ./the_subscriber &
-     ``` 
+     $ ./the_publisher.py &
+     $ ./the_subscriber.py &
+     ```
+
+    > **Note:** If you get a "ImportError: No module named boto3" error message when executing the driver programs, you will need to install Boto3 with `sudo pip install boto3`.
+
+    > **Note:** If you get a "botocore.exceptions.NoRegionError: You must specify a region." error message when executing the driver programs, you will need to configure your AWS CLI with `aws configure`.
+
 ## Steady State
 
 Files are now being sent to Amazon S3, the entry point of your ETL pipeline.  Upon landing in the S3 bucket the ETL Lambda function is being triggered to parse the received file, convert it to CSV, and write the CSV file back into the S3 bucket.  When the CSV file lands in S3 the Amazon S3 service sends a notification to an SNS topic which has an SQS queue subscribed to the topic.  
