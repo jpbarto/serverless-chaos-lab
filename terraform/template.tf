@@ -47,6 +47,31 @@ resource "aws_s3_bucket_notification" "chaos_bucket_notifications" {
 #
 #########################################
 
+resource "aws_dynamodb_table" "chaos_data_table" {
+  name           = "chaos-data-${random_id.chaos_stack.hex}"
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 20
+  write_capacity = 20
+  hash_key       = "symbol"
+  range_key      = "update_count"
+
+  attribute {
+    name = "symbol"
+    type = "S"
+  }
+
+  attribute {
+    name = "update_count"
+    type = "N"
+  }
+}
+
+#########################################
+#
+# Chaos-prepared Lambda function
+#
+#########################################
+
 resource "aws_iam_role" "chaos_lambda_role" {
   name = "ChaosLambdaRole"
 
@@ -143,7 +168,8 @@ resource "aws_lambda_function" "chaos_lambda" {
 
   environment {
     variables = {
-      FAILURE_INJECTION_PARAM = "failureLambdaConfig"
+      FAILURE_INJECTION_PARAM = "failureLambdaConfig",
+      CHAOS_DATA_TABLE = aws_dynamodb_table.chaos_data_table.id
     }
   }
 
