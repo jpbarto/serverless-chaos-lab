@@ -23,14 +23,15 @@ start_time = time ()
 last_print_time = time ()
 symbols = [''.join(i) for i in product (ascii_uppercase, repeat=4)]
 shuffle (symbols)
+print ("Publishing messages for {} symbols".format (len (symbols)))
+
 message_id = 0
 while run_flag:
-    obj_name = 'data_object_{}_{}.json'.format (dt.now ().strftime ('%d%b%Y'), int(time ()*1000))
-    symbol = symbols.pop ()
-    message_id += 1
-    data = {'symbol': symbol, 'messageId': message_id, 'value': 10, 'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
-
     if iter_obj_count <= obj_limit * 10:
+        obj_name = 'data_object_{}_{}.json'.format (dt.now ().strftime ('%d%b%Y'), int(time ()*1000))
+        symbol = symbols.pop ()
+        message_id += 1
+        data = {'symbol': symbol, 'messageId': message_id, 'value': 10, 'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
         body = json.dumps (data)
         if random () < err_rate:
             body = body.replace ('"','',1) # if we should inject an erroneous message send malformed JSON with a syntax error
