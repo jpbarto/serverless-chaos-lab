@@ -4,7 +4,9 @@ import boto3
 from time import time
 from datetime import datetime as dt
 import json
-from random import random
+from random import random, shuffle
+from itertools import product
+from string import ascii_uppercase
 
 from aws_resource_names import S3_BUCKET_NAME
 
@@ -19,9 +21,14 @@ obj_limit = 2 # number of objects per second to put
 err_rate = 0.01 # what percentage of messages should be flawed, 0.1 == 10% of messages will have syntax errors
 start_time = time ()
 last_print_time = time ()
+symbols = [''.join(i) for i in product (ascii_uppercase, repeat=4)]
+shuffle (symbols)
+message_id = 0
 while run_flag:
     obj_name = 'data_object_{}_{}.json'.format (dt.now ().strftime ('%d%b%Y'), int(time ()*1000))
-    data = {'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
+    symbol = symbols.pop ()
+    message_id += 1
+    data = {'symbol': symbol, 'messageId': message_id, 'value': 10, 'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
 
     if iter_obj_count <= obj_limit * 10:
         body = json.dumps (data)
