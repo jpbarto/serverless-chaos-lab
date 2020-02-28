@@ -53,16 +53,10 @@ resource "aws_dynamodb_table" "chaos_data_table" {
   read_capacity  = 20
   write_capacity = 20
   hash_key       = "symbol"
-  range_key      = "update_count"
 
   attribute {
     name = "symbol"
     type = "S"
-  }
-
-  attribute {
-    name = "update_count"
-    type = "N"
   }
 }
 
@@ -114,6 +108,14 @@ resource "aws_iam_role_policy" "chaos_policy" {
         ],
         "Effect": "Allow",
         "Resource": "${aws_s3_bucket.chaos_bucket.arn}/*"
+      },
+      {
+        "Action": [
+          "dynamodb:UpdateItem",
+          "dynamodb:PutItem"
+        ],
+        "Effect": "Allow",
+        "Resource": "${aws_dynamodb_table.chaos_data_table.arn}"
       },
       {
         "Action": [

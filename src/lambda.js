@@ -8,6 +8,9 @@ const opts = { "fields": fields };
 
 
 var s3 = new AWS.S3();
+var ddb = new AWS.DynamoDB.DocumentClient();
+
+var chaosDataTable = process.env.CHAOS_DATA_TABLE;
 
 exports.handler = failureLambda(async (event, context, callback) => {
     console.log ('Handling event', JSON.stringify (event));
@@ -23,6 +26,31 @@ exports.handler = failureLambda(async (event, context, callback) => {
     const data = await s3.getObject({ Bucket: srcBucket, Key: srcKey }).promise ();
     jsonData = JSON.parse (data.Body.toString ('utf-8'));
     console.log ("Read data:", jsonData);
+
+    console.log ("data is for symbol: "+ jsonData.symbol);
+//    data = {'symbol': symbol, 'messageId': message_id, 'value': 10, 'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
+    var params = {
+        TableName: chaosDataTable,
+        Key:{
+            "symbol": jsonData.symbol
+        },
+        UpdateExpression: "ADD updateCount :i, symbolValue :v SET lastMessage = :mid",
+        ExpressionAttributeValues:{
+            ":mid": jsonData.messageId,
+            ":v": jsonData.value,
+            ":i": 1
+        },
+        ReturnValues:"UPDATED_NEW"
+    };
+    
+    ddb.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+        }
+    });
+
 
     try {
         const csvData = parse (jsonData, opts);
