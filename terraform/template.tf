@@ -26,11 +26,11 @@ resource "aws_s3_bucket" "chaos_bucket" {
 resource "aws_s3_bucket_notification" "chaos_bucket_notifications" {
   bucket = aws_s3_bucket.chaos_bucket.id
 
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.chaos_lambda.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "input/"
-    filter_suffix       = ".json"
+  queue {
+    queue_arn     = aws_sqs_queue.chaos_json_queue.arn
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = "input/"
+    filter_suffix = ".json"
   }
 
   topic {
@@ -53,9 +53,15 @@ resource "aws_dynamodb_table" "chaos_data_table" {
   read_capacity  = 20
   write_capacity = 20
   hash_key       = "symbol"
+  range_key       = "entryType"
 
   attribute {
     name = "symbol"
+    type = "S"
+  }
+
+  attribute {
+    name = "entryType"
     type = "S"
   }
 }
@@ -126,6 +132,15 @@ resource "aws_iam_role_policy" "chaos_policy" {
       },
       {
         "Action": [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        "Effect": "Allow",
+        "Resource": "${aws_sqs_queue.chaos_json_queue.arn}"
+      },
+      {
+        "Action": [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -136,16 +151,12 @@ resource "aws_iam_role_policy" "chaos_policy" {
     ]
   }
 EOF
-
 }
 
-resource "aws_lambda_permission" "allow_bucket" {
-  statement_id   = "AllowExecutionFromS3Bucket"
-  action         = "lambda:InvokeFunction"
-  function_name  = aws_lambda_function.chaos_lambda.arn
-  principal      = "s3.amazonaws.com"
-  source_arn     = aws_s3_bucket.chaos_bucket.arn
-  source_account = data.aws_caller_identity.current.account_id
+resource "aws_lambda_event_source_mapping" "sqs_event_source" {
+  event_source_arn = aws_sqs_queue.chaos_json_queue.arn
+  function_name    = aws_lambda_function.chaos_lambda.arn
+  batch_size = 1
 }
 
 data "archive_file" "chaos_lambda_zip" {
@@ -222,9 +233,32 @@ POLICY
 
 #########################################
 #
-# Chaos File Processed topic
+# Chaos File Processed queue 
 #
 #########################################
+
+resource "aws_sqs_queue" "chaos_json_queue" {
+  name = "chaos-json-work-queue-${random_id.chaos_stack.hex}"
+
+  policy = <<EOL
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "s3.amazonaws.com" 
+      },
+      "Action": "sqs:SendMessage",
+      "Resource": "arn:aws:sqs:*:*:chaos-json-work-queue-${random_id.chaos_stack.hex}",
+      "Condition": {
+        "ArnEquals": { "aws:SourceArn": "${aws_s3_bucket.chaos_bucket.arn}" }
+      }
+    }
+  ]
+}
+EOL
+}
 
 resource "aws_sqs_queue" "chaos_error_queue" {
   name = "chaos-error-queue-${random_id.chaos_stack.hex}"
