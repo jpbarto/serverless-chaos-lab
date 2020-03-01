@@ -15,9 +15,12 @@ var chaosDataTable = process.env.CHAOS_DATA_TABLE;
 exports.handler = failureLambda(async (event, context, callback) => {
     console.log ('Handling event', JSON.stringify (event));
 
-    var srcBucket = event.Records[0].s3.bucket.name;
+    var s3Event = JSON.parse (event.Records[0].body);
+    console.log ('Extracted S3 event', JSON.stringify (s3Event));
+
+    var srcBucket = s3Event.Records[0].s3.bucket.name;
     // Object key may have spaces or unicode non-ASCII characters.
-    var srcKey    = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
+    var srcKey    = decodeURIComponent(s3Event.Records[0].s3.object.key.replace(/\+/g, " "));
     var dstBucket = srcBucket;
     var dstKey    = "output/" + srcKey.replace(/input\//g, "") +".csv";
 
@@ -27,12 +30,12 @@ exports.handler = failureLambda(async (event, context, callback) => {
     jsonData = JSON.parse (data.Body.toString ('utf-8'));
     console.log ("Read data:", jsonData);
 
-    console.log ("data is for symbol: "+ jsonData.symbol);
-//    data = {'symbol': symbol, 'messageId': message_id, 'value': 10, 'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
+    // Update the database with the latest summary of the symbol
     var params = {
         TableName: chaosDataTable,
         Key:{
-            "symbol": jsonData.symbol
+            "symbol": jsonData.symbol,
+            "entryType": "latest"
         },
         UpdateExpression: "ADD updateCount :i, symbolValue :v SET lastMessage = :mid",
         ExpressionAttributeValues:{
@@ -51,6 +54,29 @@ exports.handler = failureLambda(async (event, context, callback) => {
         }
     });
 
+    // record the individual record
+    var dateStr = (new Date ()).toISOString ()
+    var params = {
+        TableName: chaosDataTable,
+        Key:{
+            "symbol": jsonData.symbol,
+            "entryType": dateStr +"#"+ jsonData.messageId
+        },
+        UpdateExpression: "SET symbolValue =:v, processingTimestamp = :d, messageId = :mid",
+        ExpressionAttributeValues:{
+            ":mid": jsonData.messageId,
+            ":v": jsonData.value,
+            ":d": dateStr
+        },
+        ReturnValues:"UPDATED_NEW"
+    };
+    ddb.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+        }
+    });
 
     try {
         const csvData = parse (jsonData, opts);
