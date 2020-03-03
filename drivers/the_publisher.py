@@ -32,7 +32,7 @@ try:
         if iter_obj_count <= obj_limit * 10:
             symbol = symbols.pop ()
             message_id += 1
-            obj_name = '{}_msg-{}_{}_{}.json'.format (symbol, message_id, dt.now ().strftime ('%d%b%Y'), int(time ()*1000))
+            obj_name = 'data_object_msg-{}.json'.format (message_id)
             data = {'symbol': symbol, 'messageId': message_id, 'value': 10, 'objectName': obj_name, 'submissionDate': dt.now().strftime ('%d-%b-%Y %H:%M:%S'), 'author': 'the_publisher.py', 'version': 1.1}
             body = json.dumps (data)
             if random () < err_rate:
