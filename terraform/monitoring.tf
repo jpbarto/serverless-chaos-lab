@@ -18,13 +18,13 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}" ],
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "chaos-csv-work-queue-90983042c82fb6e7" ],
                     [ ".", "NumberOfMessagesReceived", ".", "." ],
                     [ ".", "NumberOfMessagesDeleted", ".", "." ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current.name}",
+                "region": "eu-west-2",
                 "stat": "Sum",
                 "period": 300,
                 "title": "SQS Stats"
@@ -38,14 +38,13 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_error_queue.name}" ],
-                    [ ".", "NumberOfMessagesReceived", ".", "." ],
-                    [ ".", "NumberOfMessagesDeleted", ".", "." ]
+                    [ "AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "chaos-error-queue-90983042c82fb6e7" ],
+                    [ ".", "ApproximateAgeOfOldestMessage", ".", "." ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current.name}",
-                "stat": "Sum",
+                "region": "eu-west-2",
+                "stat": "Maximum",
                 "period": 300,
                 "title": "ETL Error Stats"
             }
@@ -63,7 +62,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                 "stat": "Sum",
                 "period": 300,
                 "metrics": [
-                    [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "${aws_sns_topic.chaos_topic.name}" ],
+                    [ "AWS/SNS", "NumberOfNotificationsFailed", "TopicName", "chaos-csv-notification-topic-90983042c82fb6e7" ],
                     [ ".", "NumberOfNotificationsDelivered", ".", "." ],
                     [ ".", "NumberOfMessagesPublished", ".", "." ]
                 ],
@@ -78,7 +77,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "stat": "Average" } ],
+                    [ "AWS/Lambda", "Duration", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "stat": "Average" } ],
                     [ ".", "Errors", ".", "." ],
                     [ ".", "Invocations", ".", "." ],
                     [ ".", "Throttles", ".", "." ],
@@ -86,7 +85,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current.name}",
+                "region": "eu-west-2",
                 "stat": "Sum",
                 "period": 300,
                 "title": "Lambda Stats"
@@ -100,14 +99,14 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m1 - m2)/m1)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
-                    [ { "expression": "(m3/m1)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m1", "visible": false } ],
-                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
-                    [ "...", "${aws_sqs_queue.chaos_error_queue.name}", { "id": "m3", "visible": false } ]
+                    [ { "expression": "((m1 - m2)/m1)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "eu-west-2" } ],
+                    [ { "expression": "(m4/m1)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "eu-west-2" } ],
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "id": "m1", "visible": false } ],
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "chaos-csv-work-queue-90983042c82fb6e7", { "id": "m2", "visible": false } ],
+                    [ "AWS/Lambda", "Errors", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "id": "m4", "visible": false } ]
                 ],
                 "view": "timeSeries",
-                "region": "${data.aws_region.current.name}",
+                "region": "eu-west-2",
                 "stat": "Sum",
                 "period": 300,
                 "title": "Pipeline Trend",
@@ -122,14 +121,14 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m1 - m2)/m1)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
-                    [ { "expression": "(m3/m1)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m1", "visible": false } ],
-                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
-                    [ "...", "${aws_sqs_queue.chaos_error_queue.name}", { "id": "m3", "visible": false } ]
+                    [ { "expression": "((m1 - m2)/m1)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "eu-west-2" } ],
+                    [ { "expression": "(m4/m1)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "eu-west-2" } ],
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "id": "m1", "visible": false } ],
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "chaos-csv-work-queue-90983042c82fb6e7", { "id": "m2", "visible": false } ],
+                    [ "AWS/Lambda", "Errors", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "id": "m4", "visible": false } ]
                 ],
                 "view": "singleValue",
-                "region": "${data.aws_region.current.name}",
+                "region": "eu-west-2",
                 "stat": "Sum",
                 "period": 300,
                 "title": "Pipeline Point in Time"
