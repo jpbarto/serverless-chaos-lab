@@ -83,7 +83,7 @@ resource "local_file" "steady_state_error" {
 [
     {
         "Id": "pctError",
-        "Expression": "(sqsErrCount / lambdaInvokes)*100",
+        "Expression": "(lambdaErrors / lambdaInvokes)*100",
         "Label": "PercentInError"
     },
     {
@@ -106,15 +106,15 @@ resource "local_file" "steady_state_error" {
         "ReturnData": false
     },
     {
-        "Id": "sqsErrCount",
+        "Id": "lambdaErrors",
         "MetricStat": {
             "Metric": {
-                "Namespace": "AWS/SQS",
-                "MetricName": "NumberOfMessagesSent",
+                "Namespace": "AWS/Lambda",
+                "MetricName": "Errors",
                 "Dimensions": [
                     {
-                        "Name": "QueueName",
-                        "Value": "${aws_sqs_queue.chaos_error_queue.name}"
+                        "Name": "FunctionName",
+                        "Value": "${aws_lambda_function.chaos_lambda.function_name}"
                     }
                 ]
             },
