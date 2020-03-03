@@ -107,10 +107,6 @@ resource "aws_lambda_function" "chaos_lambda" {
   runtime          = "nodejs12.x"
   timeout          = 3
 
-  dead_letter_config {
-    target_arn = aws_sqs_queue.chaos_error_queue.arn
-  }
-
   environment {
     variables = {
       FAILURE_INJECTION_PARAM = "failureLambdaConfig",

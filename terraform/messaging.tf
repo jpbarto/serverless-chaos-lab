@@ -53,6 +53,12 @@ resource "aws_sqs_queue" "chaos_json_queue" {
   ]
 }
 EOL
+  redrive_policy = <<EOL
+{
+  "maxReceiveCount": 3,
+  "deadLetterTargetArn": "${aws_sqs_queue.chaos_error_queue.arn}"
+}
+EOL
 }
 
 resource "aws_sqs_queue" "chaos_error_queue" {
