@@ -47,7 +47,7 @@
               "name": "messages-in-flight",
               "tolerance": {
                   "type": "range",
-                  "range": [1.0, 6.0],
+                  "range": [0.0, 50.0],
                   "target": "stdout"
               },
               "provider": {
@@ -79,7 +79,7 @@
           "provider": {
               "type": "process",
               "path": "aws",
-              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 30000, \"maxLatency\": 45000 }'"
+              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 35000, \"maxLatency\": 55000 }'"
           },
           "pauses": {
               "after": 360

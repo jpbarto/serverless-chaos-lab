@@ -4,6 +4,13 @@
 
 In this lab you will use the ETL Lambda function created in the previous lab to experiment with the [failure-lambda]() NPM package.
 
+## Failure-Lambda
+
+A challenge with serverless services like DynamoDB, SQS, and Lambda is that you cannot directly affect the underlying service to introduce disruption.  Some developers have begun to create abilities to simulate failures however and we will use one such library today to disrupt the Lambda function in our architecture.
+
+[Failure-Lambda]()
+
+Use the following as a test event for your Lambda function.  Be sure and set the bucket name appropriately.
 ```json
 {
   "Records": [
@@ -44,3 +51,7 @@ In this lab you will use the ETL Lambda function created in the previous lab to 
   ]
 }
 ```
+
+Create the test event and execute your function, it should execute normally.
+
+Now modify the SSM parameter governing the Failure-Lambda library and observe the effects of different configurations such as latency or blacklist.

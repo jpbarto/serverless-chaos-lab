@@ -47,7 +47,7 @@
               "name": "messages-in-flight",
               "tolerance": {
                   "type": "range",
-                  "range": [1.0, 6.0],
+                  "range": [0.0, 50.0],
                   "target": "stdout"
               },
               "provider": {

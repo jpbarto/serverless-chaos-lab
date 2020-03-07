@@ -76,11 +76,11 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "stat": "Average" } ],
-                    [ ".", "Errors", ".", "." ],
-                    [ ".", "Invocations", ".", "." ],
-                    [ ".", "Throttles", ".", "." ],
-                    [ ".", "ConcurrentExecutions", ".", ".", { "stat": "Average" } ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "ChaosTransformer-90983042c82fb6e7", { "stat": "Average", "label": "Avg Duration" } ],
+                    [ ".", "Errors", ".", ".", { "label": "Total Errors" } ],
+                    [ ".", "Invocations", ".", ".", { "label": "Total Invocations" } ],
+                    [ ".", "Throttles", ".", ".", { "label": "Total Throttles" } ],
+                    [ ".", "ConcurrentExecutions", ".", ".", { "stat": "Average", "label": "Avg Concurrent Executions" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
