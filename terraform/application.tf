@@ -88,10 +88,18 @@ EOF
 resource "aws_lambda_event_source_mapping" "sqs_event_source" {
   event_source_arn = aws_sqs_queue.chaos_json_queue.arn
   function_name    = aws_lambda_function.chaos_lambda.arn
-  batch_size = 1
+  batch_size       = 1
+}
+
+resource "null_resource" "chaos_lambda_dependencies" {
+  provisioner "local-exec" {
+    command     = "npm install"
+    working_dir = "../src"
+  }
 }
 
 data "archive_file" "chaos_lambda_zip" {
+  depends_on  = [null_resource.chaos_lambda_dependencies]
   source_dir  = "${path.module}/../src/"
   output_path = "${path.module}/../build/chaos_lambda.zip"
   type        = "zip"
@@ -110,7 +118,7 @@ resource "aws_lambda_function" "chaos_lambda" {
   environment {
     variables = {
       FAILURE_INJECTION_PARAM = "failureLambdaConfig",
-      CHAOS_DATA_TABLE = aws_dynamodb_table.chaos_data_table.id
+      CHAOS_DATA_TABLE        = aws_dynamodb_table.chaos_data_table.id
     }
   }
 
