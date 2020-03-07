@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "title": "Delay should not impact processing",
+  "title": "Extended delay should not impact processing",
   "description": "Inject latency into Lambda function execution and ensure files are still processed.",
   "tags": [
       "serverless",
@@ -22,7 +22,7 @@
       }
   },
   "steady-state-hypothesis": {
-      "title": "Services are all available and healthy",
+      "title": "System is operating within norms",
       "probes": [
           {
               "type": "probe",
@@ -61,7 +61,7 @@
               "name": "normal-error-rates",
               "tolerance": {
                   "type": "range",
-                  "range": [0.0, 2.0],
+                  "range": [0.0, 5.0],
                   "target": "stdout"
               },
               "provider": {
@@ -75,11 +75,11 @@
   "method": [
       {
           "type": "action",
-          "name": "Enable Lambda failure: EXCEPTION",
+          "name": "Enable Lambda failure: LATENCY",
           "provider": {
               "type": "process",
               "path": "aws",
-              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"exception\", \"rate\": 0.5, \"minLatency\": 3000, \"maxLatency\": 4000, \"exceptionMsg\": \"Exceptional exception message!\", \"statusCode\": 404, \"diskSpace\": 100}'"
+              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 30000, \"maxLatency\": 45000 }'"
           },
           "pauses": {
               "after": 360
@@ -93,7 +93,7 @@
           "provider": {
               "type": "process",
               "path": "aws",
-              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 30, \"maxLatency\": 40, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}'"
+              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": false}'"
           }
       }
   ]

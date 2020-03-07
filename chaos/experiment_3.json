@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "title": "Minor delay should not impact processing",
+  "title": "Dependent service disruption should not impact processing",
   "description": "Inject latency into Lambda function execution and ensure files are still processed.",
   "tags": [
       "serverless",
@@ -79,7 +79,7 @@
           "provider": {
               "type": "process",
               "path": "aws",
-              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 15000, \"maxLatency\": 30000 }'"
+              "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"blacklist\", \"blacklist\": ["dynamodb.*.amazonaws.com"] }'"
           },
           "pauses": {
               "after": 360
