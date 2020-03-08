@@ -106,6 +106,7 @@ data "archive_file" "chaos_lambda_zip" {
 }
 
 resource "aws_lambda_function" "chaos_lambda" {
+  depends_on = [archive_file.chaos_lambda_zip]
   filename         = "${path.module}/../build/chaos_lambda.zip"
   source_code_hash = filebase64sha256("${path.module}/../build/chaos_lambda.zip")
   function_name    = "ChaosTransformer-${random_id.chaos_stack.hex}"
@@ -136,5 +137,5 @@ resource "aws_lambda_function" "chaos_lambda" {
 resource "aws_ssm_parameter" "chaos_lambda_param" {
   name  = "failureLambdaConfig"
   type  = "String"
-  value = "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 400, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}"
+  value = "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 5000, \"blacklist\": [\"dynamodb.*.amazonaws.com\"], \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}"
 }

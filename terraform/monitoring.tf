@@ -51,7 +51,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
         {
             "type": "metric",
             "x": 0,
-            "y": 3,
+            "y": 6,
             "width": 12,
             "height": 3,
             "properties": {
@@ -136,7 +136,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
         {
             "type": "metric",
             "x": 0,
-            "y": 6,
+            "y": 3,
             "width": 12,
             "height": 3,
             "properties": {
