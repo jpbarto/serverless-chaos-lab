@@ -18,12 +18,12 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue}", { "label": "Total Messages In (5 min)" } ],
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "label": "Total Messages In (5 min)" } ],
                     [ ".", "NumberOfMessagesReceived", ".", ".", { "label": "Total Messages Out (5 min)" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
                 "title": "CSV Output Queue"
@@ -42,7 +42,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Maximum",
                 "period": 300,
                 "title": "ETL Error Queue"
@@ -62,7 +62,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
                 "title": "CSV Output Topic"
@@ -80,11 +80,11 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                     [ ".", "Errors", ".", ".", { "label": "Total Errors" } ],
                     [ ".", "Invocations", ".", ".", { "label": "Total Invocations" } ],
                     [ ".", "Throttles", ".", ".", { "label": "Total Throttles" } ],
-                    [ ".", "ConcurrentExecutions", ".", ".", { "stat": "Average", "label": "Avg Concurrent Executions" } ]
+                    [ ".", "Concurrent.nameExecutions", ".", ".", { "stat": "Average", "label": "Avg Concurrent.name Executions" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
                 "title": "JSON ETL Processor"
@@ -98,14 +98,14 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current}" } ],
-                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current}" } ],
+                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
                     [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m4", "visible": false } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_json_queue.name}", { "id": "m3", "visible": false } ]
                 ],
                 "view": "timeSeries",
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
                 "title": "Pipeline Trend",
@@ -120,14 +120,14 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current}" } ],
-                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current}" } ],
+                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
                     [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m4", "visible": false } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_json_queue.name}", { "id": "m3", "visible": false } ]
                 ],
                 "view": "singleValue",
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
                 "title": "Pipeline Point in Time"
@@ -146,7 +146,7 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
                 ],
                 "view": "singleValue",
                 "stacked": false,
-                "region": "${data.aws_region.current}",
+                "region": "${data.aws_region.current.name}",
                 "stat": "Sum",
                 "period": 300,
                 "title": "JSON Input Queue"
