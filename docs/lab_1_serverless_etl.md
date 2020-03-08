@@ -13,22 +13,6 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
 
 ## Prepare the environment
 
-1. If not done yet, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
-
-1. Clone the repository locally.
-
-    ```bash
-    $ git clone https://github.com/jpbarto/serverless-chaos-lab
-    $ cd serverless-chaos-lab
-    ```
-
-1. Package the lambda function.
-
-   ```bash
-   $ mkdir build
-   $ cd src/
-   $ zip ../build/chaos_lambda.zip lambda.js package.json
-   ```
 
  ## Create the pipeline
 
@@ -38,7 +22,7 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
     ```bash
     $ cd terraform
     $ terraform init
-    $ terraform apply .
+    $ terraform apply
     ```
 
  1. Visit the dashboard for the ETL pipeline using the [AWS CloudWatch Console](https://console.aws.amazon.com/cloudwatch/home?#dashboards:).  Look for and open the dashboard with a name such as `chaos-dashboard-3c0ad6c72e1a1234`.

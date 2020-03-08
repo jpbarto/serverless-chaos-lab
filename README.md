@@ -49,6 +49,26 @@ To find out more about the practice of Chaos Engineering please see some of the 
 
 ## Labs
 
+### Prerequisites
+
+> Note: If you are running this from an AWS Cloud9 IDE you will not have all of the permissions you need to deploy this architecture.  Disable the AWS managed temporary credentials and [configure an EC2 instance profile](https://docs.aws.amazon.com/cloud9/latest/user-guide/credentials.html#credentials-temporary) for your Cloud9 system.
+
+1. Clone the repository locally.
+
+    ```bash
+    $ git clone https://github.com/jpbarto/serverless-chaos-lab
+    $ cd serverless-chaos-lab
+    ```
+
+1. If not done yet, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
+
+1. Install PipEnv
+```bash
+$ pip install pipenv
+$ pipenv install --three chaostoolkit chaostoolkit-aws boto3 awscli
+$ pipenv shell
+```
+
 1. [Deploy a serverless ETL pipeline](docs/lab_1_serverless_etl.md)
     
     Using Hashicorp Terraform deploy a serverless pipeline for converting JSON documents to CSV.  In this lab you will also provide a publisher of JSON documents to this pipeline and simulate a consumer of the pipeline in order to generate metrics data that is viewable using a CloudWatch metrics dashboard.

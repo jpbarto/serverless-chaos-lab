@@ -8,8 +8,16 @@ Using Chaos-Toolkit work through the process of designing a hypothesis and creat
 
 The following experiment should cause the Lambda function to exceed its allotted runtime.  A simple fix, merely extend the Lambda allowed run time.
 
-Update the Terraform code to change the runtime to a value of 2 minutes.
+## Step by Step
 
+1. In the Chaos directory you will see an experiement.  Execute it using the following command:
+
+```bash
+$ source aws_resource_names.sh
+$ chaos run experiment_1.json
+```
+
+Update the Terraform code to change the runtime to a value of 2 minutes.
 reapply the terraform.
 
 ## Chaos Experiment
