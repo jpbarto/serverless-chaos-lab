@@ -21,6 +21,7 @@ SQS_QUEUE_NAME="${aws_sqs_queue.chaos_csv_queue.name}"
 SNS_TOPIC_NAME="${aws_sns_topic.chaos_topic.name}"
 S3_BUCKET_NAME="${aws_s3_bucket.chaos_bucket.bucket}"
 LAMBDA_FUNCTION_NAME="${aws_lambda_function.chaos_lambda.function_name}"
+AWS_REGION="${data.aws_region.current}"
 
 export SQS_QUEUE_NAME SNS_TOPIC_NAME S3_BUCKET_NAME LAMBDA_FUNCTION_NAME
 EOF
