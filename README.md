@@ -76,6 +76,8 @@ Let's now download and deploy a serverless application that we can iterate on an
 
 1. If Terraform is not already installed, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
 
+> Note: These labs require Terraform v12 or higher.
+
 1. Install PipEnv
     ```bash
     $ pip install pipenv

@@ -22,8 +22,10 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
     ```bash
     $ cd terraform
     $ terraform init
-    $ terraform apply
+    $ terraform apply -auto-approve
     ```
+
+    > If you are asked to specify a region use an AWS region code such as `us-east-2`, `eu-west-2`, or `ap-southeast-1`.
 
  1. Visit the dashboard for the ETL pipeline using the [AWS CloudWatch Console](https://console.aws.amazon.com/cloudwatch/home?#dashboards:).  Look for and open the dashboard with a name such as `chaos-dashboard-3c0ad6c72e1a1234`.
 
