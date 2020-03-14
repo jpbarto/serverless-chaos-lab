@@ -7,3 +7,4 @@ chaostoolkit.log
 journal.json
 tmp_data
 notes.md
+*.pyc

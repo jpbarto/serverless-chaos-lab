@@ -2,30 +2,18 @@
 
 ## Overview
 
-The following series of workshops will walk you through the process of creating a Chaos experiment to test the resiliency of your Serverless architecture.  You will establish the steady state of your application, perturb the application by injecting a faults into the environment, and then observe how the application responds to the turbulence.  You will then apply corrections to your architecture to allow it to better cope with turbulent conditions.  
+The following series of workshops will walk you through the process of creating a Chaos experiment to test the resiliency of your Serverless architecture.  You will establish the steady state of your application, perturb the application by injecting faults into the environment, and then observe how the application responds to the turbulence.  You will then apply corrections to your architecture to allow it to better perform in turbulent conditions.  
 
-## Contents
+## Getting Started
 
-```shell
-├── README.md                       # Introduction (this doc)
-├── chaos                           # directory for chaos experiments
-│   ├── Pipfile                     # Pipenv configuration file
-│   ├── percentInFlight.json        # Cloudwatch metric defining SLO
-│   └── experiment.json             # Chaos experiments #1 and #2
-├── docs                            # Lab guides
-│   ├── lab_1_serverless_etl.md
-│   ├── lab_2_inject_fault.md
-│   ├── lab_3_chaos_experiment.md
-│   └── lab_4_chaos_experiment_2.md
-├── drivers
-│   ├── the_publisher.py            # Publication driver for pipeline
-│   └── the_subscriber.py           # Subscription driver for pipeline
-└── src
-│   ├── lambda.js                   # NodeJS code for ETL Lambda
-│   └── package.json                # ETL dependencies
-└── terraform
-    └── template.tf                 # Terraform template to create the ETL pipeline
-```
+Get started learning about chaos engineering by cloning this repository and following along in the reading material.  Please note that this repository is focused on learning-by-doing and so the amount of reading hosted here about chaos engineering is minimal.  However there are a numerous number of locations online to learn more about chaos engineering.  To find out more please visit:
+
+- [Principles of Chaos Engineering](https://principlesofchaos.org/)
+- [The Chaos Engineering Collection](https://medium.com/@adhorn/the-chaos-engineering-collection-5e188d6a90e2), by [Adrian Hornsby](https://medium.com/@adhorn)
+ - [Chaos Engineering: why breaking things should be practiced](https://www.youtube.com/watch?v=4FuCTXgufQg), by Adrian Hornsby
+ - [Performing Chaos in a Serverless World](https://www.youtube.com/watch?v=vbyjpMeYitA), by [Gunnar Grosch](https://grosch.se/)
+
+ Now let's continue by starting with a brief overview of chaos engineering and then deploying your serverless application in Lab 1.
 
 ## Chaos Engineering
 
@@ -41,15 +29,9 @@ Chaos engineering uses experiments to test the impact of potential failure modes
 
 There are numerous tools and techniques for conducting chaos experiments on different types of architecture.  What follows are a set of labs to use two such tools to develop and execute chaos experiments on a serverless ETL application.  
 
-To find out more about the practice of Chaos Engineering please see some of the fantastic materials presented by Adrian Hornsby and Gunnar Grosch:
+Let's now download and deploy a serverless application that we can iterate on and improve through the process of chaos engineering.
 
- - [The Chaos Engineering Collection](https://medium.com/@adhorn/the-chaos-engineering-collection-5e188d6a90e2), by [Adrian Hornsby](https://medium.com/@adhorn)
- - [Chaos Engineering: why breaking things should be practiced](https://www.youtube.com/watch?v=4FuCTXgufQg), by Adrian Hornsby
- - [Performing Chaos in a Serverless World](https://www.youtube.com/watch?v=vbyjpMeYitA), by [Gunnar Grosch](https://grosch.se/)
-
-## Labs
-
-### Prerequisites
+## Lab 0 - First thing's first
 
 > Note: If you are running this from an AWS Cloud9 IDE you will not have all of the permissions you need to deploy this architecture.  Disable the AWS managed temporary credentials and [configure an EC2 instance profile](https://docs.aws.amazon.com/cloud9/latest/user-guide/credentials.html#credentials-temporary) for your Cloud9 system.
 
@@ -60,14 +42,50 @@ To find out more about the practice of Chaos Engineering please see some of the 
     $ cd serverless-chaos-lab
     ```
 
-1. If not done yet, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
+    ### Repository Contents
+    ```shell
+    ├── README.md                       # Introduction (this doc)
+    ├── build
+    │   └── chaos_lambda.zip            # an empty placeholder file
+    ├── chaos                           # directory for chaos experiments
+    │   ├── Pipfile                     # Pipenv configuration file
+    │   ├── experiment_1.json
+    │   ├── experiment_2.json
+    │   ├── experiment_3.json
+    ├── docs                            # Lab guides
+    │   ├── images
+    │   ├── lab_1_serverless_etl.md
+    │   ├── lab_2_inject_fault.md
+    │   ├── lab_3_chaos_experiment.md
+    │   └── lab_4_chaos_experiment_2.md
+    ├── drivers
+    │   ├── the_publisher.py            # Publication driver for pipeline
+    │   └── the_subscriber.py           # Subscription driver for pipeline
+    └── src
+    │   ├── lambda.js                   # NodeJS code for ETL Lambda
+    │   └── package.json                # ETL dependencies
+    └── terraform                       # Terraform templates for a Serverless ETL pipeline
+        ├── application.tf              # deploys the Lambda function
+        ├── database.tf                 # deploys a DynamoDB table
+        ├── filestore.tf                # creates the S3 bucket
+        ├── messaging.tf                # creates a collection of queues and topics
+        ├── monitoring.tf               # creates a CloudWatch Dashboard
+        ├── outputs.tf                  # creates identifier files for the drivers and chaos experiments
+        └── template.tf                 # wrapper around the above
+    ```
+
+1. If Terraform is not already installed, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
 
 1. Install PipEnv
-```bash
-$ pip install pipenv
-$ pipenv install --three chaostoolkit chaostoolkit-aws boto3 awscli
-$ pipenv shell
-```
+    ```bash
+    $ pip install pipenv
+    $ pipenv install --three chaostoolkit chaostoolkit-aws boto3 awscli
+    $ pipenv shell
+    ```
+
+## Labs
+
+With the above completed you're now ready to embark on a series of hands-on labs to learn about chaos engineering.  Let's get started!
 
 1. [Deploy a serverless ETL pipeline](docs/lab_1_serverless_etl.md)
     
