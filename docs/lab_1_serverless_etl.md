@@ -73,4 +73,4 @@ When a file is encountered by the ETL Lambda function which it cannot parse it w
 
 In this lab you used Infrastructure-as-Code to deploy a serverless ETL pipeline.  You reviewed the various AWS consoles associated with the AWS services in use, and you also applied a load to the architecture using drivers to push files to and pull notifications from the ETL architecture.
 
-Leave the drivers running, in the next lab you will begin to use chaos engineering tooling to learn how to inject failures into the serverless architecture.
+Leave the drivers running, in [the next lab](lab_2_inject_fault.md) you will begin to use chaos engineering tooling to learn how to inject failures into the serverless architecture.
