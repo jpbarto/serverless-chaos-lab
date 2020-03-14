@@ -2,7 +2,7 @@ build
 node_modules
 *.tfstate*
 .terraform
-Pipfile*
+Pipfile.lock
 chaostoolkit.log
 journal.json
 tmp_data
