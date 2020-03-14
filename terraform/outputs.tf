@@ -33,19 +33,19 @@ resource "local_file" "steady_state_flight" {
 [
     {
         "Id": "pctFlight",
-        "Expression": "((lambdaInvokes - sqsMsgCount) / lambdaInvokes)*100",
+        "Expression": "((sqsInMsgCount - sqsOutMsgCount) / sqsInMsgCount)*100",
         "Label": "PercentInFlight"
     },
     {
-        "Id": "lambdaInvokes",
+        "Id": "sqsInMsgCount",
         "MetricStat": {
             "Metric": {
-                "Namespace": "AWS/Lambda",
-                "MetricName": "Invocations",
+                "Namespace": "AWS/SQS",
+                "MetricName": "NumberOfMessagesSent",
                 "Dimensions": [
                     {
-                        "Name": "FunctionName",
-                        "Value": "${aws_lambda_function.chaos_lambda.function_name}"
+                        "Name": "QueueName",
+                        "Value": "${aws_sqs_queue.chaos_json_queue.name}"
                     }
                 ]
             },
@@ -56,7 +56,7 @@ resource "local_file" "steady_state_flight" {
         "ReturnData": false
     },
     {
-        "Id": "sqsMsgCount",
+        "Id": "sqsOutMsgCount",
         "MetricStat": {
             "Metric": {
                 "Namespace": "AWS/SQS",
@@ -84,19 +84,19 @@ resource "local_file" "steady_state_error" {
 [
     {
         "Id": "pctError",
-        "Expression": "(lambdaErrors / lambdaInvokes)*100",
+        "Expression": "(lambdaErrors / sqsInMsgCount)*100",
         "Label": "PercentInError"
     },
     {
-        "Id": "lambdaInvokes",
+        "Id": "sqsInMsgCount",
         "MetricStat": {
             "Metric": {
-                "Namespace": "AWS/Lambda",
-                "MetricName": "Invocations",
+                "Namespace": "AWS/SQS",
+                "MetricName": "NumberOfMessagesSent",
                 "Dimensions": [
                     {
-                        "Name": "FunctionName",
-                        "Value": "${aws_lambda_function.chaos_lambda.function_name}"
+                        "Name": "QueueName",
+                        "Value": "${aws_sqs_queue.chaos_json_queue.name}"
                     }
                 ]
             },
