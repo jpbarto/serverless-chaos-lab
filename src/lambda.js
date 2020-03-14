@@ -27,7 +27,7 @@ exports.handler = failureLambda(async (event, context, callback) => {
     console.log ("Reading JSON file", srcKey, "in bucket", srcBucket);
 
     const data = await s3.getObject({ Bucket: srcBucket, Key: srcKey }).promise ();
-    jsonData = JSON.parse (data.Body.toString ('utf-8'));
+    var jsonData = JSON.parse (data.Body.toString ('utf-8'));
     console.log ("Read data:", jsonData);
 
     // Update the database with the latest summary of the symbol
@@ -55,8 +55,8 @@ exports.handler = failureLambda(async (event, context, callback) => {
     });
 
     // record the individual record
-    var dateStr = (new Date ()).toISOString ()
-    var params = {
+    var dateStr = (new Date ()).toISOString ();
+    params = {
         TableName: chaosDataTable,
         Key:{
             "symbol": jsonData.symbol,
