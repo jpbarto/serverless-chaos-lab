@@ -69,4 +69,8 @@ Files are now being sent to Amazon S3, the entry point of your ETL pipeline.  Up
 
 When a file is encountered by the ETL Lambda function which it cannot parse it will experience an exception.  S3 will invoke the Lambda function 2 more times in an effort to parse the file, if all 3 invocations experience an error the message will be stored into the dead letter queue configured for the Lambda function.
 
+## Summary
 
+In this lab you used Infrastructure-as-Code to deploy a serverless ETL pipeline.  You reviewed the various AWS consoles associated with the AWS services in use, and you also applied a load to the architecture using drivers to push files to and pull notifications from the ETL architecture.
+
+Leave the drivers running, in the next lab you will begin to use chaos engineering tooling to learn how to inject failures into the serverless architecture.
