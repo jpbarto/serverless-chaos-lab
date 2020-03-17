@@ -106,8 +106,10 @@ data "archive_file" "chaos_lambda_zip" {
 }
 
 resource "aws_lambda_function" "chaos_lambda" {
+  depends_on = [data.archive_file.chaos_lambda_zip]
+
   filename         = "${path.module}/../build/chaos_lambda.zip"
-  source_code_hash = filebase64sha256("${path.module}/../build/chaos_lambda.zip")
+  source_code_hash = filebase64sha256("${path.module}/../src/lambda.js")
   function_name    = "ChaosTransformer-${random_id.chaos_stack.hex}"
   handler          = "lambda.handler"
   memory_size      = 128
