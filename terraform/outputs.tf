@@ -23,7 +23,7 @@ S3_BUCKET_NAME="${aws_s3_bucket.chaos_bucket.bucket}"
 LAMBDA_FUNCTION_NAME="${aws_lambda_function.chaos_lambda.function_name}"
 AWS_REGION="${data.aws_region.current.name}"
 
-export SQS_QUEUE_NAME SNS_TOPIC_NAME S3_BUCKET_NAME LAMBDA_FUNCTION_NAME
+export SQS_QUEUE_NAME SNS_TOPIC_NAME S3_BUCKET_NAME LAMBDA_FUNCTION_NAME AWS_REGION
 EOF
 }
 

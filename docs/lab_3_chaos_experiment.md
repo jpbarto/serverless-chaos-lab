@@ -35,7 +35,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
 
 1. Create your experiment's skeleton
 
-    Chaos Toolkit experiments are defined as JSON files.  A detailed breakdown is available [online](https://docs.chaostoolkit.org/reference/api/experiment/) but for now create the beginnings of your experiment by creating a file named `experiment_1.json` with the following contents:
+    Chaos Toolkit experiments are defined as JSON files.  A detailed breakdown is available [online](https://docs.chaostoolkit.org/reference/api/experiment/) but for now create the beginnings of your experiment by creating a file named `exp_1-minor_delay.json` with the following contents:
 
     ```json
     {
@@ -73,6 +73,8 @@ Take a moment and consider the many ways that your ETL architecture could go wro
     }
     ```
 
+    A lot of the above is boiler plate and placeholders which will soon be completed in the steps to follow.  One comment regarding the `configuration` section, it pulls in the environment variables defined in step 1 so they can be referenced in the rest of the experiment definition.  For more about the `configuration` section please see the [documentation](https://docs.chaostoolkit.org/reference/api/experiment/#configuration).
+
 1. Define a steady state
 
     Take a moment and consider what you think would be good, measurable indicators that demonstrate the ETL pipeline is executing as expected.  Would you measure the number of errors produced?  How many errors would you accept before notifying someone and considering the system to be in an error state?
@@ -87,9 +89,9 @@ Take a moment and consider the many ways that your ETL architecture could go wro
 
     To mesaure the number of SNS errors we can simply create a probe which queries AWS CloudWatch.
 
-    To measure the other two we will still use CloudWatch as our data source but we will use some simple mathematics to calculate the percentages we need to demonstrate steady state.  There should be two files in your chaos folder, one for the in flight message calculation and one for the error rate calculation.  Have a look at their source but we will pass them to the AWS CLI as another probe to be used by Chaos Toolkit to evaluate our steady state.
+    To measure the other two we will still use CloudWatch as our data source but we will need some simple mathematics to calculate the percentages that demonstrate steady state.  There should be two files in your chaos folder, one for the in flight message calculation and one for the error rate calculation.  Have a look at their source but we will pass them to the AWS CLI as another probe to be used by Chaos Toolkit to evaluate our steady state.
 
-    All three probes are defined below.  Update the `experiment_1.json` file by adding this `probes` definition to the `steady-state-hypothesis` of your experiment.
+    All three probes are defined below.  Update the `exp_1-minor_delay.json` file by adding this `probes` definition to the `steady-state-hypothesis` of your experiment.
 
     ```json
     "probes": [
@@ -140,6 +142,11 @@ Take a moment and consider the many ways that your ETL architecture could go wro
             }
         }
     ]
+    ```
+
+1. Execute
+    ```bash
+    $ chaos run exp_1-minor_delay.json
     ```
 
 Update the Terraform code to change the runtime to a value of 2 minutes.
