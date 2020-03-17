@@ -136,5 +136,5 @@ resource "aws_lambda_function" "chaos_lambda" {
 resource "aws_ssm_parameter" "chaos_lambda_param" {
   name  = "failureLambdaConfig"
   type  = "String"
-  value = "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 5000, \"blacklist\": [\"dynamodb.*.amazonaws.com\"], \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100}"
+  value = "{\"isEnabled\": false}"
 }
