@@ -28,10 +28,23 @@ exports.handler = failureLambda(async (event, context, callback) => {
 
     const data = await s3.getObject({ Bucket: srcBucket, Key: srcKey }).promise ();
     var jsonData = JSON.parse (data.Body.toString ('utf-8'));
-    console.log ("Read data:", jsonData);
+    console.log ("Read JSON data:", jsonData);
 
     // Update the database with the latest summary of the symbol
     var params = {
+        TableName: chaosDataTable,
+        Key:{
+            "symbol": jsonData.symbol,
+            "entryType": dateStr +"#"+ jsonData.messageId
+        }
+    };
+    var ddbData = await ddb.get (params).promise ();
+    console.log ("The value of ddbData is:", JSON.stringify(ddbData, null, 2));
+    
+    
+    // if unique message identifier exists, then exit - don't process the same message again
+    
+    params = {
         TableName: chaosDataTable,
         Key:{
             "symbol": jsonData.symbol,
