@@ -13,7 +13,7 @@ var ddb = new AWS.DynamoDB.DocumentClient();
 var chaosDataTable = process.env.CHAOS_DATA_TABLE;
 
 exports.handler = failureLambda(async (event, context, callback) => {
-    console.log ('Handling event', JSON.stringify (event));
+    console.log ('ETL processor handling event', JSON.stringify (event));
 
     var s3Event = JSON.parse (event.Records[0].body);
     console.log ('Extracted S3 event', JSON.stringify (s3Event));
@@ -28,7 +28,7 @@ exports.handler = failureLambda(async (event, context, callback) => {
 
     const data = await s3.getObject({ Bucket: srcBucket, Key: srcKey }).promise ();
     var jsonData = JSON.parse (data.Body.toString ('utf-8'));
-    console.log ("Read JSON data:", jsonData);
+    console.log ("Retrieved JSON data:", jsonData);
 
     // Update the database with the latest summary of the symbol
     var params = {
@@ -38,9 +38,8 @@ exports.handler = failureLambda(async (event, context, callback) => {
             "entryType": dateStr +"#"+ jsonData.messageId
         }
     };
-    var ddbData = await ddb.get (params).promise ();
-    console.log ("The value of ddbData is:", JSON.stringify(ddbData, null, 2));
-    
+    var ddbData = ddb.get (params).promise ();
+    console.log ("For symbol", jsonData.symbol, "DynamoDB has the following data:", JSON.stringify(ddbData, null, 2));
     
     // if unique message identifier exists, then exit - don't process the same message again
     
@@ -58,12 +57,11 @@ exports.handler = failureLambda(async (event, context, callback) => {
         },
         ReturnValues:"UPDATED_NEW"
     };
-    
     ddb.update(params, function(err, data) {
         if (err) {
-            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            console.error("Unable to update", jsonData.symbol, "aggregate record in DynamoDB, Error JSON:", JSON.stringify(err, null, 2));
         } else {
-            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            console.log("Updated DynamoDB for", jsonData.symbol, ":", JSON.stringify(data, null, 2));
         }
     });
 
@@ -85,15 +83,15 @@ exports.handler = failureLambda(async (event, context, callback) => {
     };
     ddb.update(params, function(err, data) {
         if (err) {
-            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            console.error("Unable to record message ID in DynamoDB, Error JSON:", JSON.stringify(err, null, 2));
         } else {
-            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            console.log("Recorded", jsonData.symbol, "message ID", jsonData.messageId, "in DynamoDB", JSON.stringify(data, null, 2));
         }
     });
 
     try {
         const csvData = parse (jsonData, opts);
-        console.log("CSV data", csvData);
+        console.log("Parsed CSV data from JSON:", csvData);
         const result = await s3.putObject({ Bucket: dstBucket, Key: dstKey, Body: csvData, ContentType: 'text/csv' }).promise ();
     } catch (err) {
         console.error(err);
@@ -106,6 +104,6 @@ exports.handler = failureLambda(async (event, context, callback) => {
         body: JSON.stringify('Input conversion complete')
     };
 
-    console.log ("Object processed");
+    console.log ("ETL processer completed processing of", srcKey, "in bucket", srcBucket);
     callback (null, response);
 });
