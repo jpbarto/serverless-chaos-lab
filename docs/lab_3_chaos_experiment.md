@@ -165,20 +165,20 @@ Take a moment and consider the many ways that your ETL architecture could go wro
     Update your experiment definition with the following action.  It will modify the configuration parameter for the failure-lambda library causing the Lambda function to, 50% of the time, take 3 to 5 seconds longer to execute.  After modifying the Lambda functions configuration the system will pause for 5 min before re-evaluating the steady state of the application.
 
    ```json
-    "method": [
-        {
-            "type": "action",
-            "name": "Enable Lambda failure: LATENCY",
-            "provider": {
-                "type": "process",
-                "path": "aws",
-                "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 3000, \"maxLatency\": 5000}'"
-            },
-            "pauses": {
-                "after": 360
-            }
-        }
-    ],
+   "method": [
+       {
+           "type": "action",
+           "name": "Enable Lambda failure: LATENCY",
+           "provider": {
+               "type": "process",
+               "path": "aws",
+               "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 3000, \"maxLatency\": 5000}'"
+           },
+           "pauses": {
+               "after": 360
+           }
+       }
+   ],
    ``` 
 
 1. Experiment responsibly
