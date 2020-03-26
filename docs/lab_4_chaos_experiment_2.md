@@ -188,3 +188,5 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
 
 ## Summary
+
+You have now concluded this workshop.  You have used Chaos-Toolkit and failure-lambda to develop and execute chaos experiments on a serverless architecture on AWS.  There are many more experiments which can be performed on this architecture to improve it, but how will you now use this informaiton to improve your own serverless architecture?
