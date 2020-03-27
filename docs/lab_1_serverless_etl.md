@@ -31,8 +31,6 @@ After deploying the architecture you will use drivers to publish and consume JSO
 
     The function will be named something like `ChaosTransformer-1234ABCD`.  Make a note of the function's configuration, what causes it to execute, how long can it execute for, what environment variables does it have configured, etc.
 
-    ### ETL Lambda code
-
     If you would like to review the code for your Lambda function you can see it in the `lambda.js` file in the `src` directory of this repository.
 
 1. Review the DynamoDB table created using the [AWS DynamoDB console](https://console.aws.amazon.com/dynamodb/home?#tables:).
