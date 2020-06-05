@@ -8,6 +8,7 @@ import json
 from random import random, shuffle
 from itertools import product
 from string import ascii_uppercase
+from ratelimiter import RateLimiter
 
 from aws_resource_names import S3_BUCKET_NAME
 
@@ -27,9 +28,11 @@ shuffle (symbols)
 print ("Publishing messages for {} symbols".format (len (symbols)))
 
 message_id = 0
+rate_limiter = RateLimiter(max_calls=obj_limit)
+
 try:
     while run_flag:
-        if iter_obj_count <= obj_limit * 10:
+        with rate_limiter:
             symbol = symbols.pop ()
             message_id += 1
             obj_name = 'data_object_msg-{}.json'.format (message_id)
@@ -41,7 +44,7 @@ try:
             obj_count += 1
             iter_obj_count += 1
 
-        if (int(time () - start_time) % 10) == 0 and (time () - last_print_time) > 10:
+        if iter_obj_count % (obj_limit * 10) == 0:
             print ("{}: Pushed {} objects for a total of {} objects".format (dt.now ().strftime ('%Y-%b-%d %H:%M:%S'), iter_obj_count, obj_count))
             last_print_time = time ()
             iter_obj_count = 0
