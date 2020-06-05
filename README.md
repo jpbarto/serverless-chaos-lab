@@ -45,13 +45,6 @@ Let's now download and deploy a serverless application that we can iterate on an
     ### Repository Contents
     ```shell
     ├── README.md                       # Introduction (this doc)
-    ├── build
-    │   └── chaos_lambda.zip            # an empty placeholder file
-    ├── chaos                           # directory for chaos experiments
-    │   ├── Pipfile                     # Pipenv configuration file
-    │   ├── experiment_1.json
-    │   ├── experiment_2.json
-    │   ├── experiment_3.json
     ├── docs                            # Lab guides
     │   ├── images
     │   ├── lab_1_serverless_etl.md
@@ -112,3 +105,12 @@ With the above completed you're now ready to embark on a series of hands-on labs
     Not all chaos can be mitigated in code, sometimes a human has to get involved.  In this lab you will assume that an unforseen event has occurred, disrupting your SLO and requiring your team's intervention.  But how will you know that the system needs your help?  In this lab you will design a new chaos experiment to force an unknown failure and enable an alarm to trigger, notifying you of when the unexpected happens.
 
     (Key objective: Using Chaos Toolkit define an experiment and execute to inject unknown error.  Enable an alarm to trigger when the SLO is compromised)
+
+## FAQ
+1. **When running the Chaos Toolkit the probes fail even without disrupting the system, what is happening?**
+
+    Some of the probes depend upon your system's local `date` command in order to obtain a datetime stamp to query CloudWatch metrics.  The current command being used assumes a Linux-based environment.  However if you are on a BSD-based environment, such as OSX, you will need to alter the `date` commands in your experiment JSON.  Replace `date --date '5 min ago'` with `date -v -5M`.
+  
+1. **My `date` command is correct but the Chaos Toolkit probes still fail without disruption, what is happening?**
+
+    It's unclear why but some configurations of the Python ecosystem and AWS CLI seem to have a detrimental effect on the `get-metrics-data` call to AWS CloudWatch metrics.  When querying the API an empty data set is returned.  This has been known to be the case on OSX Catalina with AWS CLI v1 and v2.
