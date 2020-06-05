@@ -4,7 +4,7 @@
 
 In this lab you will use infrastructure-as-code tooling to deploy a serverless ETL pipeline into AWS.  This pipeline is designed to accept JSON documents, convert them to CSV, and update a DynamoDB table with stats pulled from the data.  The infrastructure-as-code will create a an architecture similar to that show below.
 
-![Serverless ETL Architecture](serverless-chaos-etl.png)
+![Serverless ETL Architecture](images/serverless-etl-architecture.png)
 
 After deploying the architecture you will use drivers to publish and consume JSON and CSV files through the architecture.  These drivers will run throughout the labs.
 
