@@ -142,6 +142,8 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
     In this instance the percentage of messages in flight should be outside of tolerance.
 
+## What have we learned?
+
 1. Understanding the results
 
     Your experiment is configured to check a number of service level indicators to determine if the application is working normally.  The failed metric tracks the percentage of messages that are currently being processed by your ETL pipeline.  To see this metric for yourself you can execute the following AWS CLI command from within the `chaos` directory:
@@ -171,6 +173,8 @@ To simulate a service disruption we will again use the failure-lambda library's 
     ```
     7b2c3ad9-0e0c-5c3c-83e7-6c2de114e600	INFO	Intercepted network connection to dynamodb.us-east-2.amazonaws.com
     ```
+
+## Iterate and improve
 
 1. Fix it
 
