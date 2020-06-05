@@ -225,7 +225,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
 
     You should notice that the average function duration is less thatn 500 milliseconds but then peaks at 3000 milliseconds.  But if the latency was as much as 5 seconds, why is that not reflected?  A closer look at the function's configuration will reveal a `Timeout` of 3 seconds, hence the function was being terminated after 3 seconds of execution, hence the increased error rate.
 
-    To correct this, update the Terraform `application.tf` and set the `timeout` value for the `aws_lambda_function` resource to have a value of 120 seconds.  With this file changed and reapply the Terraform code to push the change.
+    To correct this, update the Terraform `application.tf` and set the `timeout` value for the `aws_lambda_function` resource to have a value of 120 seconds.  With this file changed, reapply the Terraform code to push the change.
 
     ```bash
     $ cd ../terraform
