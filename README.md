@@ -6,11 +6,11 @@ The following series of workshops will walk you through the process of creating 
 
 ## Table of Contents
 
-1. [Getting Started](#Getting Started)
-1. [Chaos Engineering](#Chaos Engineering)
-1. [Lab 0 - First thing's first](#Lab 0 - First thing's first)
-1. [Labs](#Labs)
-1. [FAQ](#FAQ)
+  1. [Getting Started](#getting-started)
+  1. [Chaos Engineering](#chaos-engineering)
+  1. [Prerequisites](#prerequisites)
+  1. [Labs](#labs)
+  1. [FAQ](#faq)
 
 ## Getting Started
 
@@ -39,7 +39,7 @@ There are numerous tools and techniques for conducting chaos experiments on diff
 
 Let's now download and deploy a serverless application that we can iterate on and improve through the process of chaos engineering.
 
-## Lab 0 - First thing's first
+## Prerequisites
 
 > Note: If you are running this from an AWS Cloud9 IDE you will not have all of the permissions you need to deploy this architecture.  Disable the AWS managed temporary credentials and [configure an EC2 instance profile](https://docs.aws.amazon.com/cloud9/latest/user-guide/credentials.html#credentials-temporary) for your Cloud9 system.
 
