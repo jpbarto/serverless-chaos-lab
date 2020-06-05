@@ -76,11 +76,11 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "stat": "Average", "label": "Avg Duration" } ],
-                    [ ".", "Errors", ".", ".", { "label": "Total Errors" } ],
-                    [ ".", "Invocations", ".", ".", { "label": "Total Invocations" } ],
-                    [ ".", "Throttles", ".", ".", { "label": "Total Throttles" } ],
-                    [ ".", "Concurrent.nameExecutions", ".", ".", { "stat": "Average", "label": "Avg Concurrent.name Executions" } ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "stat": "Average", "label": "Avg Duration (5 min)" } ],
+                    [ ".", "Errors", ".", ".", { "label": "Total Errors (5 min)" } ],
+                    [ ".", "Invocations", ".", ".", { "label": "Total Invocations (5 min)" } ],
+                    [ ".", "Throttles", ".", ".", { "label": "Total Throttles (5 min)" } ],
+                    [ ".", "Concurrent.nameExecutions", ".", ".", { "stat": "Average", "label": "Avg Concurrent.name Executions (5 min)" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
@@ -98,8 +98,8 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
-                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight (5 min)", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error (5 min)", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
                     [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m4", "visible": false } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_json_queue.name}", { "id": "m3", "visible": false } ]
@@ -120,8 +120,8 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
-                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight (5 min)", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(m4/m3)*100", "label": "Percent in Error (5 min)", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
                     [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m4", "visible": false } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_json_queue.name}", { "id": "m3", "visible": false } ]
