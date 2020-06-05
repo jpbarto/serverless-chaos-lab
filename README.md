@@ -126,3 +126,7 @@ With the above completed you're now ready to embark on a series of hands-on labs
 1. **After a failed experiment, I fix the issue and rerun the experiment but it still fails, what is happening?**
 
     After a failed experiment the Chaos Toolkit will rollback changes to allow the system to resume its steady state.  However the system will not return to steady state instantaneously, it can take as much as 15 min for the system to return to its steady state and be ready for more testing.  You *may* be able to accelerate this time to recovery by purging the SQS queues.
+
+1. **The Chaos Toolkit isn't executing properly but I don't know why, how do I troubleshoot?**
+
+    The Chaos Toolkit will write detailed output to `chaostoolkit.log` and a summary of the metrics it tracks to `journal.json`.  You can look through these files for any clues as to what went wrong.  You can also specify the `--verbose` flag upon execution to get more detailed output to the console: `chaos --verbose run experiment.json`.
