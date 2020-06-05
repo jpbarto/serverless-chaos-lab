@@ -33,6 +33,8 @@ Take a moment and consider the many ways that your ETL architecture could go wro
     $ source aws_resource_names.sh
     ```
 
+## Define the experiement
+
 1. Create your experiment's skeleton
 
     Chaos Toolkit experiments are defined as JSON files.  A detailed breakdown is available [online](https://docs.chaostoolkit.org/reference/api/experiment/) but for now create the beginnings of your experiment by creating a file named `exp_1-minor_delay.json` with the following contents:
@@ -156,6 +158,8 @@ Take a moment and consider the many ways that your ETL architecture could go wro
 
     Let's change that.
 
+## Execute your experiment
+
 1. Introduce some chaos
 
     The [method section](https://docs.chaostoolkit.org/reference/api/experiment/#method) of an experiment defines the step(s) to take in order to introduce turbulence into the system.  The method section is a list of actions and probes which you define.  
@@ -210,6 +214,8 @@ Take a moment and consider the many ways that your ETL architecture could go wro
     ```
 
     After updating the failure-lambda configuration the Chaos Toolkit will wait 5 min to allow the system time to respond to the disruption.  It should fail citing too high an error rate, rolling back the changes to resume normal operations.
+
+## What has been learned?
 
 1. Enhance the system
 
