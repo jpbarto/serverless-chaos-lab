@@ -4,6 +4,14 @@
 
 The following series of workshops will walk you through the process of creating a Chaos experiment to test the resiliency of your Serverless architecture.  You will establish the steady state of your application, perturb the application by injecting faults into the environment, and then observe how the application responds to the turbulence.  You will then apply corrections to your architecture to allow it to better perform in turbulent conditions.  
 
+## Table of Contents
+
+  1. [Getting Started](#getting-started)
+  1. [Chaos Engineering](#chaos-engineering)
+  1. [Prerequisites](#prerequisites)
+  1. [Labs](#labs)
+  1. [FAQ](#faq)
+
 ## Getting Started
 
 Get started learning about chaos engineering by cloning this repository and following along in the reading material.  Please note that this repository is focused on learning-by-doing and so the amount of reading hosted here about chaos engineering is minimal.  However there are a numerous number of locations online to learn more about chaos engineering.  To find out more please visit:
@@ -31,7 +39,7 @@ There are numerous tools and techniques for conducting chaos experiments on diff
 
 Let's now download and deploy a serverless application that we can iterate on and improve through the process of chaos engineering.
 
-## Lab 0 - First thing's first
+## Prerequisites
 
 > Note: If you are running this from an AWS Cloud9 IDE you will not have all of the permissions you need to deploy this architecture.  Disable the AWS managed temporary credentials and [configure an EC2 instance profile](https://docs.aws.amazon.com/cloud9/latest/user-guide/credentials.html#credentials-temporary) for your Cloud9 system.
 
@@ -45,13 +53,6 @@ Let's now download and deploy a serverless application that we can iterate on an
     ### Repository Contents
     ```shell
     ├── README.md                       # Introduction (this doc)
-    ├── build
-    │   └── chaos_lambda.zip            # an empty placeholder file
-    ├── chaos                           # directory for chaos experiments
-    │   ├── Pipfile                     # Pipenv configuration file
-    │   ├── experiment_1.json
-    │   ├── experiment_2.json
-    │   ├── experiment_3.json
     ├── docs                            # Lab guides
     │   ├── images
     │   ├── lab_1_serverless_etl.md
@@ -112,3 +113,16 @@ With the above completed you're now ready to embark on a series of hands-on labs
     Not all chaos can be mitigated in code, sometimes a human has to get involved.  In this lab you will assume that an unforseen event has occurred, disrupting your SLO and requiring your team's intervention.  But how will you know that the system needs your help?  In this lab you will design a new chaos experiment to force an unknown failure and enable an alarm to trigger, notifying you of when the unexpected happens.
 
     (Key objective: Using Chaos Toolkit define an experiment and execute to inject unknown error.  Enable an alarm to trigger when the SLO is compromised)
+
+## FAQ
+1. **When running the Chaos Toolkit the probes fail even without disrupting the system, what is happening?**
+
+    Some of the probes depend upon your system's local `date` command in order to obtain a datetime stamp to query CloudWatch metrics.  The current command being used assumes a Linux-based environment.  However if you are on a BSD-based environment, such as OSX, you will need to alter the `date` commands in your experiment JSON.  Replace `date --date '5 min ago'` with `date -v -5M`.
+  
+1. **My `date` command is correct but the Chaos Toolkit probes still fail without disruption, what is happening?**
+
+    It's unclear why but some configurations of the Python ecosystem and AWS CLI seem to have a detrimental effect on the `get-metrics-data` call to AWS CloudWatch metrics.  When querying the API an empty data set is returned.  This has been known to be the case on OSX Catalina with AWS CLI v1 and v2.
+
+1. **After a failed experiment, I fix the issue and rerun the experiment but it still fails, what is happening?**
+
+    After a failed experiment the Chaos Toolkit will rollback changes to allow the system to resume its steady state.  However the system will not return to steady state instantaneously, it can take as much as 15 min for the system to return to its steady state and be ready for more testing.  You *may* be able to accelerate this time to recovery by purging the SQS queues.

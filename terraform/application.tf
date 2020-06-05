@@ -50,7 +50,8 @@ resource "aws_iam_role_policy" "chaos_policy" {
       {
         "Action": [
           "dynamodb:UpdateItem",
-          "dynamodb:PutItem"
+          "dynamodb:PutItem",
+          "dynamodb:GetItem"
         ],
         "Effect": "Allow",
         "Resource": "${aws_dynamodb_table.chaos_data_table.arn}"
