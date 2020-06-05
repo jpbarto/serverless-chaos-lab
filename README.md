@@ -114,3 +114,7 @@ With the above completed you're now ready to embark on a series of hands-on labs
 1. **My `date` command is correct but the Chaos Toolkit probes still fail without disruption, what is happening?**
 
     It's unclear why but some configurations of the Python ecosystem and AWS CLI seem to have a detrimental effect on the `get-metrics-data` call to AWS CloudWatch metrics.  When querying the API an empty data set is returned.  This has been known to be the case on OSX Catalina with AWS CLI v1 and v2.
+
+1. **After a failed experiment, I fix the issue and rerun the experiment but it still fails, what is happening?**
+
+    After a failed experiment the Chaos Toolkit will rollback changes to allow the system to resume its steady state.  However the system will not return to steady state instantaneously, it can take as much as 15 min for the system to return to its steady state and be ready for more testing.  You *may* be able to accelerate this time to recovery by purging the SQS queues.
