@@ -144,7 +144,9 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
 1. Understanding the results
 
-    Your experiment is configured to check a number of KPIs to determine if the application is working normally.  The failed metric tracks the percentage of messages that are currently being processed by your ETL pipeline.  To see this metric for yourself you can execute the following AWS CLI command from within the `chaos` directory:
+    Your experiment is configured to check a number of service level indicators to determine if the application is working normally.  The failed metric tracks the percentage of messages that are currently being processed by your ETL pipeline.  To see this metric for yourself you can execute the following AWS CLI command from within the `chaos` directory:
+
+    > Note that the `date` command below assumes the Linux operating system.
 
     ```bash
     $ aws cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'
