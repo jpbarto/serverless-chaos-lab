@@ -18,7 +18,7 @@ resource "local_file" "chaos_variables" {
 #!$(which sh)
 
 SQS_QUEUE_NAME="${aws_sqs_queue.chaos_csv_queue.name}"
-SQS_QUEUE_URL="${aws_sqs_queue.chaos_csv_queue.url}"
+SQS_QUEUE_URL="${aws_sqs_queue.chaos_csv_queue.id}"
 SNS_TOPIC_NAME="${aws_sns_topic.chaos_topic.name}"
 S3_BUCKET_NAME="${aws_s3_bucket.chaos_bucket.bucket}"
 LAMBDA_FUNCTION_NAME="${aws_lambda_function.chaos_lambda.function_name}"
