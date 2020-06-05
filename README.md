@@ -4,6 +4,14 @@
 
 The following series of workshops will walk you through the process of creating a Chaos experiment to test the resiliency of your Serverless architecture.  You will establish the steady state of your application, perturb the application by injecting faults into the environment, and then observe how the application responds to the turbulence.  You will then apply corrections to your architecture to allow it to better perform in turbulent conditions.  
 
+## Table of Contents
+
+1. [Getting Started](#Getting Started)
+1. [Chaos Engineering](#Chaos Engineering)
+1. [Lab 0 - First thing's first](#Lab 0 - First thing's first)
+1. [Labs](#Labs)
+1. [FAQ](#FAQ)
+
 ## Getting Started
 
 Get started learning about chaos engineering by cloning this repository and following along in the reading material.  Please note that this repository is focused on learning-by-doing and so the amount of reading hosted here about chaos engineering is minimal.  However there are a numerous number of locations online to learn more about chaos engineering.  To find out more please visit:
