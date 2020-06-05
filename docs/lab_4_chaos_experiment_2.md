@@ -1,4 +1,4 @@
-# Lab 4: Second Chaos Experiment
+# Lab 4: Experiment with Service Disruption
 
 ## Objective
 
