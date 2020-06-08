@@ -116,7 +116,7 @@ resource "aws_lambda_function" "chaos_lambda" {
   memory_size      = 128
   role             = aws_iam_role.chaos_lambda_role.arn
   runtime          = "nodejs12.x"
-  timeout          = 3
+  timeout          = 120
 
   environment {
     variables = {

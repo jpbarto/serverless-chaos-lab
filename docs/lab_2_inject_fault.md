@@ -53,7 +53,7 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
 
 1. Perform a successful test
 
-    Before we start injecting failures lets ensure your function is testing normally.  Click the `Test` button with your new test event defined.  The results should result in a `Succeeded` status.
+    Before we start injecting failures lets ensure your function is testing normally.  Click the `Test` button with your new test event defined.  The test should result in a `Succeeded` status.
 
 1. Configure Failure-Lambda for latency injection
 
@@ -61,10 +61,10 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
 
     ```json
     {
-        "isEnabled": true, 
-        "failureMode": "latency", 
-        "rate": 1, 
-        "minLatency": 1000, 
+        "isEnabled": true,
+        "failureMode": "latency",
+        "rate": 1,
+        "minLatency": 1000,
         "maxLatency": 5000
     }
     ```
@@ -81,9 +81,9 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
 
     ```json
     { 
-        "isEnabled": true, 
-        "failureMode": "blacklist", 
-        "rate": 1, 
+        "isEnabled": true,
+        "failureMode": "blacklist",
+        "rate": 1,
         "blacklist": ["dynamodb.*.amazonaws.com"]
     }
     ```

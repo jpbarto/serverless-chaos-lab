@@ -8,7 +8,7 @@ In this lab you will learn about [Chaos-Toolkit](https://chaostoolkit.org/) and 
 
 The [Chaos Toolkit](https://chaostoolkit.org/) aims to be the simplest and easiest way to explore building your own Chaos Engineering Experiments. It also aims to define a vendor and technology independent way of specifying Chaos Engineering experiments by providing an Open API.
 
-It uses a declaritive and extensible format for specifying and scripting chaos experiments.  This allows you to automate chaos engineering and incorporate experiments into your CI/CD pipelines.
+It uses a declarative and extensible format for specifying and scripting chaos experiments.  This allows you to automate chaos engineering and incorporate experiments into your CI/CD pipelines.
 
 The toolkit also has been [extended](https://chaostoolkit.org/extensions) to allow it to support, out of the box, the ability to interact with major cloud computing providers, Kubernetes, Spring and Spring Boot, and many others.  
 
@@ -33,7 +33,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
     $ source aws_resource_names.sh
     ```
 
-## Define the experiement
+## Define the experiment
 
 1. Create your experiment's skeleton
 
@@ -146,6 +146,8 @@ Take a moment and consider the many ways that your ETL architecture could go wro
     ]
     ```
 
+    > **Note**: You may need to adjust the `date` commands here on some platforms. Please see the FAQ in the main README file.
+
 1. Evaluate the steady state
 
     You now have the beginnings of your experiment.  Execute Chaos Toolkit with your definition and watch its output as it assesses the steady state of your application.
@@ -164,7 +166,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
 
     The [method section](https://docs.chaostoolkit.org/reference/api/experiment/#method) of an experiment defines the step(s) to take in order to introduce turbulence into the system.  The method section is a list of actions and probes which you define.  
 
-    Lets now introduce a minor latency of 3 to 5 seconds to the Lambda function.
+    Let's now introduce a minor latency of 3 to 5 seconds to the Lambda function.
 
     Update your experiment definition with the following action.  It will modify the configuration parameter for the failure-lambda library causing the Lambda function to, 50% of the time, take 3 to 5 seconds longer to execute.  After modifying the Lambda functions configuration the system will pause for 5 min before re-evaluating the steady state of the application.
 
@@ -183,7 +185,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
            }
        }
    ],
-   ``` 
+   ```
 
 1. Experiment responsibly
 
