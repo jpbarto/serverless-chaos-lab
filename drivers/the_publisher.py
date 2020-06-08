@@ -51,4 +51,5 @@ try:
             iter_obj_count = 0
 except KeyboardInterrupt:
     print ("Pushed a total of {} objects; exiting...".format (obj_count))
-    sys.exit (0)
+except IndexError:
+    print("Pushed all symbols, exiting.")
