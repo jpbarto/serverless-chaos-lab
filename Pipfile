@@ -8,6 +8,8 @@ verify_ssl = true
 [packages]
 chaostoolkit = "*"
 chaostoolkit-aws = "*"
+boto3 = "*"
+ratelimiter = "*"
 
 [requires]
 python_version = "3.6"
