@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-import boto3
-from time import time
+import json
 import sys
 from datetime import datetime as dt
-import json
-from random import random, shuffle
 from itertools import product
+from random import random, shuffle
 from string import ascii_uppercase
+from time import time
+
+import boto3
 from ratelimiter import RateLimiter
 
 from aws_resource_names import S3_BUCKET_NAME

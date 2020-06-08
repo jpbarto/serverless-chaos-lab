@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import boto3
-from time import time
-from datetime import datetime as dt
-import json
 import sys
+from datetime import datetime as dt
+from time import time
+
+import boto3
 from ratelimiter import RateLimiter
 
 from aws_resource_names import SQS_QUEUE_NAME
