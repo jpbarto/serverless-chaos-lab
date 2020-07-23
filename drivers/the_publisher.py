@@ -30,7 +30,7 @@ seg_start_time = time ()
 try:
     while run_flag:
         # go to sleep every 10 seconds to try to keep publication rate at the obj_limit setting
-        if iter_obj_count <= obj_limit * 10:
+        if iter_obj_count < obj_limit * 10:
             symbol = symbols.pop ()
             message_id += 1
             obj_name = 'data_object_msg-{}.json'.format (message_id)
@@ -43,7 +43,9 @@ try:
             iter_obj_count += 1
         else:
             # we've published enough messages for this 10 sec segment, sleep now
-            sleep (10*1000 - (time () - seg_start_time))
+            sleep_time = 10 - (time () - seg_start_time)
+            if sleep_time > 0:
+                sleep (sleep_time)
             print ("{}: Pushed {} objects for a total of {} objects".format (dt.now ().strftime ('%Y-%b-%d %H:%M:%S'), iter_obj_count, obj_count))
             seg_start_time = time ()
             iter_obj_count = 0
