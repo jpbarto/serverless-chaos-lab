@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import boto3
-from time import time
+from time import time, sleep
 import sys
 from datetime import datetime as dt
 import json
@@ -21,14 +21,15 @@ iter_obj_count = 0
 obj_limit = 2 # number of objects per second to put
 err_rate = 0.01 # what percentage of messages should be flawed, 0.1 == 10% of messages will have syntax errors
 start_time = time ()
-last_print_time = time ()
 symbols = [''.join(i) for i in product (ascii_uppercase, repeat=4)]
 shuffle (symbols)
 print ("Publishing messages for {} symbols".format (len (symbols)))
 
 message_id = 0
+seg_start_time = time ()
 try:
     while run_flag:
+        # go to sleep every 10 seconds to try to keep publication rate at the obj_limit setting
         if iter_obj_count <= obj_limit * 10:
             symbol = symbols.pop ()
             message_id += 1
@@ -40,11 +41,13 @@ try:
             s3.put_object(Body=body, Bucket=S3_BUCKET_NAME, Key='input/{}'.format (obj_name))
             obj_count += 1
             iter_obj_count += 1
-
-        if (int(time () - start_time) % 10) == 0 and (time () - last_print_time) > 10:
+        else:
+            # we've published enough messages for this 10 sec segment, sleep now
+            sleep (10*1000 - (time () - seg_start_time))
             print ("{}: Pushed {} objects for a total of {} objects".format (dt.now ().strftime ('%Y-%b-%d %H:%M:%S'), iter_obj_count, obj_count))
-            last_print_time = time ()
+            seg_start_time = time ()
             iter_obj_count = 0
+
 except KeyboardInterrupt:
     print ("Pushed a total of {} objects; exiting...".format (obj_count))
     sys.exit (0)
