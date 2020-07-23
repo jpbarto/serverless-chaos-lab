@@ -75,7 +75,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
                     "provider":{
                     "type":"process",
                     "path":"aws",
-                    "arguments":"cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
+                    "arguments":"cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
                     }
                 },
                 {
@@ -92,7 +92,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
                     "provider":{
                     "type":"process",
                     "path":"aws",
-                    "arguments":"cloudwatch get-metric-data --metric-data-queries file://steadyStateError.json --start-time `date --date '5 min ago' '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
+                    "arguments":"cloudwatch get-metric-data --metric-data-queries file://steadyStateError.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
                     }
                 }
             ]
@@ -151,7 +151,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
     > Note that the `date` command below assumes the Linux operating system.
 
     ```bash
-    $ aws cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'
+    $ aws cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'
     ```
 
     As an alternative to the CLI you can visit your [CloudWatch metrics dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:) and look at the `Percent in Flight`.  Whether through the CLI or the AWS Console you should see that the Percentage in Flight is negative.  You'll recall that this metric is calculated by subtracing the messages posted to the processed CSV SQS queue from the messages posted to the JSON SQS queue and then dividing by the number of messages in the JSON queue.

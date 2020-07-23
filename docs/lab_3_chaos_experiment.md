@@ -126,7 +126,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
             "provider": {
                 "type": "process",
                 "path": "aws",
-                "arguments": "cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
+                "arguments": "cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
             }
         },
         {
@@ -140,7 +140,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
             "provider": {
                 "type": "process",
                 "path": "aws",
-                "arguments": "cloudwatch get-metric-data --metric-data-queries file://steadyStateError.json --start-time `date --date '5 min ago' '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
+                "arguments": "cloudwatch get-metric-data --metric-data-queries file://steadyStateError.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
             }
         }
     ]

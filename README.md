@@ -117,7 +117,7 @@ With the above completed you're now ready to embark on a series of hands-on labs
 ## FAQ
 1. **When running the Chaos Toolkit the probes fail even without disrupting the system, what is happening?**
 
-    Some of the probes depend upon your system's local `date` command in order to obtain a datetime stamp to query CloudWatch metrics.  The current command being used assumes a Linux-based environment.  However if you are on a BSD-based environment, such as OSX, you will need to alter the `date` commands in your experiment JSON.  Replace `date --date '5 min ago'` with `date -u -v -5M`.
+    Some of the probes depend upon your system's local `date` command in order to obtain a datetime stamp to query CloudWatch metrics.  The current command being used assumes a Linux-based environment.  However if you are on a BSD-based environment, such as OSX, you will need to alter the `date` commands in your experiment JSON.  Replace `date --date '5 min ago'` with `date -v -5M`.
 
     For example:
 
@@ -133,7 +133,7 @@ With the above completed you're now ready to embark on a series of hands-on labs
                 "provider": {
                     "type": "process",
                     "path": "aws",
-                    "arguments": "cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date -u -v -5M '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
+                    "arguments": "cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'"
                 }
             },
     ```
