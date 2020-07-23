@@ -77,7 +77,9 @@ Let's now download and deploy a serverless application that we can iterate on an
 
 1. If Terraform is not already installed, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
 
-> Note: These labs require Terraform v12 or higher.
+    > Note: These labs require Terraform v12 or higher.
+
+1. To package the Lambda function, Terraform will need to use NPM and NodeJS.  If NodeJS and NPM are not already installed please [install them](https://nodejs.org/en/download/) into your environment.
 
 1. Install PipEnv
     ```bash
