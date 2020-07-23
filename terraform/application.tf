@@ -5,7 +5,7 @@
 #########################################
 
 resource "aws_iam_role" "chaos_lambda_role" {
-  name = "ChaosLambdaRole"
+  name = "ChaosLambdaRole-${random_id.chaos_stack.hex}"
 
   assume_role_policy = <<EOF
 {
