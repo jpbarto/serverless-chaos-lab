@@ -9,6 +9,7 @@ In this lab you will use infrastructure-as-code tooling to deploy a serverless E
 After deploying the architecture you will use drivers to publish and consume JSON and CSV files through the architecture.  These drivers will run throughout the labs.
 
 ## Objectives
+
  - Observe the architecture and assess the applications steady state
  - Review the custom code in the AWS Lambda function
  - Determine the service level objectives you will use to measure your steady state
@@ -58,6 +59,8 @@ After deploying the architecture you will use drivers to publish and consume JSO
      ```
 
     > **Note:** If you get a "botocore.exceptions.NoRegionError: You must specify a region." error message when executing the driver programs, you will need to configure your AWS CLI with `aws configure`.
+
+    > **Note:** If you start a new shell, remember to run `pyenv shell` before executing the Python scripts.
 
 1. Revisit some of the previous consoles for AWS Lambda, SQS, SNS, DynamoDB, and Amazon S3.  
 

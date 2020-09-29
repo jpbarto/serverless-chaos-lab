@@ -2,13 +2,13 @@
 
 ## Objective
 
-In this lab you will experiment with a different failure mode that could effect your application.  The application relies on the DynamoDB service, lets inject intermittent connectivity to the service and observe how the overall application responds.
+In this lab you will experiment with a different failure mode that could affect your application.  The application relies on the DynamoDB service, so let's inject intermittent connectivity to the service and observe how the overall application responds.
 
 ## Service Availability
 
-In the last lab you created your first chaos experiment using the Chaos Toolkit.  In this lab you will explore a different failure mode and examine how the application performs.  The failure mode we want to explore in this lab is the waivering availability of a dependency.  We cannot temporarily disrupt the DynamoDB service however we can temporarily disrupt connectivity to the service.
+In the last lab you created your first chaos experiment using the Chaos Toolkit.  In this lab you will explore a different failure mode and examine how the application performs.  The failure mode we want to explore in this lab is the wavering availability of a dependency.  We cannot temporarily disrupt the DynamoDB service however we can temporarily disrupt connectivity to the service.
 
-To simulate a service disruption we will again use the failure-lambda library's `blacklist` feature to block access to the DyanmoDB API some percentage of the time.
+To simulate a service disruption we will again use the failure-lambda library's `blacklist` feature to block access to the DynamoDB API some percentage of the time.
 
 ## The Next Experiment
 
@@ -113,6 +113,8 @@ To simulate a service disruption we will again use the failure-lambda library's 
     }
     ```
 
+    > **Note**: You may need to adjust the `date` commands here on some platforms. Please see the FAQ in the main README file.
+
     Everything in this template is the same as last time, you have the same steady state definition, the same rollback.  The title and description are updated to reflect the nature of the experiment however.
 
 1. Actions
@@ -166,7 +168,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
 1. Behavior explained
 
-    Hopefully its clear that in order for the `Percent in Flight` to be a negative number the number of messages flowing out of the pipeline are greater than the messages flowing in.  This suggests that the architecture is processing messages multiple times, causing duplication.
+    Hopefully it's clear that in order for the `Percent in Flight` to be a negative number the number of messages flowing out of the pipeline are greater than the messages flowing in.  This suggests that the architecture is processing messages multiple times, causing duplication.
 
     If you visit the Monitoring tab of the Lambda function and scroll down to the list of the most expensive invocations these will likely be one of the executions that had difficulty connecting to DynamoDB.  To review the log entries copy the RequestID and click the LogStream link for the request.  On the CloudWatch Logs console, in the Filter Events search field paste the RequestID in quotes to view only those log entries that relate to the execution.  Along with the normal execution messages you should see messages such as the following which show the Lambda was unable to connect to DynamoDB:
 
@@ -180,7 +182,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
     Looking at the source code you will notice that, around line 41, there is a call to DynamoDB which tries to check for a prior record of the message having been processed.  This is an asynchronous call and so, while NodeJS waits for DynamoDB to respond, it continues executing, making additional calls to DynamoDB and Amazon S3.  As a result, even though DynamoDB may be having issues the Lambda itself still writes output to Amazon S3.
 
-    To correct this we can instruct NodeJS to wait for the call to DynamoDB to return, this will prevent any further processing until connectivity to DynamoDB has been confirmed.  Update the source code to add the `await` modifier to the initial call to DynamoDB:
+    To correct this we can instruct NodeJS to wait for the call to DynamoDB to return. This will prevent any further processing until connectivity to DynamoDB has been confirmed.  Update the source code to add the `await` modifier to the initial call to DynamoDB:
 
     ```javascript
     var ddbData = await ddb.get (params).promise ();
@@ -192,7 +194,6 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
     Now re-run your Chaos experiment and notice that the experiment still fails but now it fails because the error rate is unnacceptably high.  How could you improve the architecture to better account for this situation?
 
-
 ## Summary
 
-You have now concluded this workshop.  You have used Chaos-Toolkit and failure-lambda to develop and execute chaos experiments on a serverless architecture on AWS.  There are many more experiments which can be performed on this architecture to improve it, but how will you now use this informaiton to improve your own serverless architecture?
+You have now concluded this workshop.  You have used Chaos-Toolkit and failure-lambda to develop and execute chaos experiments on a serverless architecture on AWS.  There are many more experiments which can be performed on this architecture to improve it, but how will you now use this information to improve your own serverless architecture?
