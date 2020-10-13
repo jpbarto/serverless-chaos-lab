@@ -17,6 +17,9 @@ After deploying the architecture you will use drivers to publish and consume JSO
 
 ## Create the pipeline
 
+> Note: If you are using an AWS Cloud9 IDE you may need to disable [AWS managed credentials](https://docs.aws.amazon.com/cloud9/latest/user-guide/how-cloud9-with-iam.html#auth-and-access-control-temporary-managed-credentials).  To disable AWS managed credentials open the **Preferences** pane for your IDE and disabled `AWS managed credentials`.
+    ![AWS managed credentials](images/aws_managed_credentials.png)
+
 1. Using the Terraform cli, deploy the architecture
 
     ```bash
@@ -57,7 +60,7 @@ After deploying the architecture you will use drivers to publish and consume JSO
      $ ./the_subscriber.py &
      ```
 
-    > **Note:** If you get a "botocore.exceptions.NoRegionError: You must specify a region." error message when executing the driver programs, you will need to configure your AWS CLI with `aws configure`.
+    > **Note:** If you get a "botocore.exceptions.NoRegionError: You must specify a region." error message when executing the driver programs, you will need to configure your AWS CLI with `aws configure`, specifying the same region code as used above with Terraform.
 
 1. Revisit some of the previous consoles for AWS Lambda, SQS, SNS, DynamoDB, and Amazon S3.  
 
