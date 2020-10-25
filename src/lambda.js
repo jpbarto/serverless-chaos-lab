@@ -1,6 +1,9 @@
+// require the failure-lambda wrapper to support Chaos Engineering
 const failureLambda = require('failure-lambda');
 
+// require the AWS SDK to communicate with S3 and DynamoDB
 var AWS = require('aws-sdk');
+// require json2csv to parse the JSON files published to S3
 const { parse } = require('json2csv');
 
 const fields = ['objectName', 'submissionDate', 'author', 'formatVersion'];
@@ -40,8 +43,6 @@ exports.handler = failureLambda(async (event, context, callback) => {
     };
     var ddbData = ddb.get (params).promise ();
     console.log ("For symbol", jsonData.symbol, "DynamoDB has the following data:", JSON.stringify(ddbData, null, 2));
-    
-    // if unique message identifier exists, then exit - don't process the same message again
     
     params = {
         TableName: chaosDataTable,
