@@ -138,7 +138,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
 
 1. Execute the experiment
 
-    Now run the experiment.  As last time it will modify the failure-lambda configuration and then wait 5 minutes before re-evaluating the steady state.
+    Now run the experiment.  As last time it will modify the failure-lambda configuration and then wait 3 minutes before re-evaluating the steady state.
 
     In this instance the percentage of messages in flight should be outside of tolerance.
 
