@@ -93,11 +93,10 @@ Let's now download and deploy a serverless application that we can iterate on an
     $ sudo yum -y install npm
     ```
 
-1. Install PipEnv to install Python dependencies.
+1. In these labs you will use the [ChaosToolkit](https://chaostoolkit.org/) to script your chaos experiments.  [Install the ChaosToolkit](https://docs.chaostoolkit.org/reference/usage/install/) using `pip3`:
+
     ```bash
-    $ sudo pip3 install pipenv
-    $ pipenv install --three 
-    $ pipenv shell
+    $ sudo pip3 install chaostoolkit chaostoolkit-aws
     ```
 
 ## Labs
