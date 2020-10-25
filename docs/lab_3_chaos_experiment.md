@@ -166,7 +166,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
 
     Lets now introduce a minor latency of 3 to 5 seconds to the Lambda function.
 
-    Update your experiment definition with the following action.  It will modify the configuration parameter for the failure-lambda library causing the Lambda function to, 50% of the time, take 3 to 5 seconds longer to execute.  After modifying the Lambda functions configuration the system will pause for 5 min before re-evaluating the steady state of the application.
+    Update your experiment definition with the following action.  It will modify the configuration parameter for the failure-lambda library causing the Lambda function to, 50% of the time, take 3 to 5 seconds longer to execute.  After modifying the Lambda functions configuration the ChaosToolkit experiment will pause for 5 min before re-evaluating the steady state of the application.
 
    ```json
    "method": [
