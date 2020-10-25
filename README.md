@@ -46,7 +46,7 @@ Let's now download and deploy a serverless application that we can iterate on an
 1. Clone the repository locally.
 
     ```bash
-    $ git clone https://github.com/jpbarto/serverless-chaos-lab
+    $ git clone https://github.com/jpbarto/serverless-chaos-lab.git
     $ cd serverless-chaos-lab
     ```
 
