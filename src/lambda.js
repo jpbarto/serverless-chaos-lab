@@ -130,6 +130,6 @@ exports.handler = failureLambda(async(event, context, callback) => {
     };
 
     console.log("ETL processer completed processing of", srcKey, "in bucket", srcBucket);
-    callback (null, response);
-    //return response;
+    //callback (null, response);
+    return response;
 });
