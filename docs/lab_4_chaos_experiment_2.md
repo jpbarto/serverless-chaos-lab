@@ -67,8 +67,8 @@ To simulate a service disruption we will again use the failure-lambda library's 
                     "tolerance":{
                     "type":"range",
                     "range":[
-                        0.0,
-                        80.0
+                        -10.0,
+                        40.0
                     ],
                     "target":"stdout"
                     },

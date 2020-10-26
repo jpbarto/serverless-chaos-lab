@@ -120,7 +120,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
             "name": "messages-in-flight",
             "tolerance": {
                 "type": "range",
-                "range": [0.0, 80.0],
+                "range": [-10.0, 40.0],
                 "target": "stdout"
             },
             "provider": {
