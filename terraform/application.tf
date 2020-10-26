@@ -74,6 +74,13 @@ resource "aws_iam_role_policy" "chaos_policy" {
       },
       {
         "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
