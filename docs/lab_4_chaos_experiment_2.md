@@ -130,7 +130,7 @@ To simulate a service disruption we will again use the failure-lambda library's 
                 "arguments":"ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"blacklist\", \"rate\": 0.5, \"blacklist\": [\"dynamodb.*.amazonaws.com\"]}'"
             },
             "pauses":{
-                "after": 180
+                "after": 300
             }
         }
     ],
