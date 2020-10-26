@@ -35,21 +35,7 @@ exports.handler = failureLambda(async(event, context, callback) => {
     console.log("Retrieved JSON data:", jsonData);
 
     // Update the database with the latest summary of the symbol
-<<<<<<< HEAD
-    var params = {
-        TableName: chaosDataTable,
-        Key:{
-            "symbol": jsonData.symbol,
-            "entryType": dateStr +"#"+ jsonData.messageId
-        }
-    };
-    var ddbData = ddb.get (params).promise ();
-    console.log ("For symbol", jsonData.symbol, "DynamoDB has the following data:", JSON.stringify(ddbData, null, 2));
-    
-    params = {
-=======
     let params = {
->>>>>>> d042253e473bed8704bfd4321b82e0ca4c62cc0a
         TableName: chaosDataTable,
         Key: {
             "symbol": jsonData.symbol,
