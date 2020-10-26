@@ -154,19 +154,21 @@ To simulate a service disruption we will again use the failure-lambda library's 
     $ aws cloudwatch get-metric-data --metric-data-queries file://steadyStateFlight.json --start-time `date --date '5 min ago' -u '+%Y-%m-%dT%H:%M:%SZ'` --end-time `date -u '+%Y-%m-%dT%H:%M:%SZ'` --query 'MetricDataResults[0].Values[0]'
     ```
 
-    As an alternative to the CLI you can visit your [CloudWatch metrics dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:) and look at the `Percent in Flight`.  Whether through the CLI or the AWS Console you should see that the Percentage in Flight is negative.  You'll recall that this metric is calculated by subtracing the messages posted to the processed CSV SQS queue from the messages posted to the JSON SQS queue and then dividing by the number of messages in the JSON queue.
+    As an alternative to the CLI you can visit your [CloudWatch metrics dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:) and look at the `Percent in Flight`.  Whether through the CLI or the AWS Console you should see that the Percentage in Flight is well over 20%.  You'll recall that this metric is calculated by subtracing the messages posted to the processed CSV SQS queue, and the records written to the DynamoDB table, from the messages posted to the JSON SQS queue and then dividing by the number of messages in the JSON queue.
 
-    > ( ( JSON messages - CSV messages ) / JSON messages ) * 100
+    > ( ( (2*JSON messages) - (CSV messages + DynamoDB Writes) ) / (2*JSON messages) ) * 100
 
     Or alternatively
 
-    > ( ( Messages In - Messages Out ) / Messages In ) * 100
+    > ( ( ( Messages In - Messages Out ) + ( Messages In - Records Stored ) ) / ( 2 * Messages In ) ) * 100
 
-    The idea is that the number of messages in will always equal or be greater than the number of messages out.  So if the result is a negative number then the number of messages out is GREATER than the number of messages in.  How could this be?  Why would this be happening?
+    The idea is that the number of messages in should always be, within tolerance, equal to the number of messages out, and the number of records written to the database.  
+
+    In this experiement the number of messages in flight has grown wildly beyond normal expected tolerances, and even though half of the Lambda functions executing are not able to communicate with the DynamoDB service the error rate has remained within norms.  What is going on?
 
 1. Behavior explained
 
-    Hopefully its clear that in order for the `Percent in Flight` to be a negative number the number of messages flowing out of the pipeline are greater than the messages flowing in.  This suggests that the architecture is processing messages multiple times, causing duplication.
+    Diving into the metrics you'll notice that the number of messages going into the Output queue have remained roughly on par with the Input queue, but the number of DynamoDB Updates is roughly half; this would be inline with the 50% intermittent connectivity rate to DynamoDB.  But if the Lambda is unable to communicate with DynamoDB why isn't an error getting raised?
 
     If you visit the Monitoring tab of the Lambda function and scroll down to the list of the most expensive invocations these will likely be one of the executions that had difficulty connecting to DynamoDB.  To review the log entries copy the RequestID and click the LogStream link for the request.  On the CloudWatch Logs console, in the Filter Events search field paste the RequestID in quotes to view only those log entries that relate to the execution.  Along with the normal execution messages you should see messages such as the following which show the Lambda was unable to connect to DynamoDB:
 
@@ -174,16 +176,18 @@ To simulate a service disruption we will again use the failure-lambda library's 
     7b2c3ad9-0e0c-5c3c-83e7-6c2de114e600	INFO	Intercepted network connection to dynamodb.us-east-2.amazonaws.com
     ```
 
+    If you look at the source code you'll notice that the Lambda should be outputting to the log when it has successfully written records to DynamoDB.  Due to the asynchronous nature of NodeJS the calls to DynamoDB (and S3) are being performed asynchronously.  This provides a tremendous performance advantage, an event-driven code base, but it also means that the Lambda may be leaving threads, which are still executing, behind when it exits.
+
 ## Iterate and improve
 
 1. Fix it
 
-    Looking at the source code you will notice that, around line 41, there is a call to DynamoDB which tries to check for a prior record of the message having been processed.  This is an asynchronous call and so, while NodeJS waits for DynamoDB to respond, it continues executing, making additional calls to DynamoDB and Amazon S3.  As a result, even though DynamoDB may be having issues the Lambda itself still writes output to Amazon S3.
+    Looking at the source code for the Lambda you'll notice that the function ends with a `return` statement.  This returns control back to the Lambda system without waiting for the NodeJS event loop to be empty.  If this line is changed to use the `callback` function Lambda will then wait for the event loop to be empty, ie for the DyanmoDB calls to fail or succeed, before exiting the Lambda.  In this way the Lambda will continue to try to communicate with DynamoDB until the function times out, causing an error that is tracked by the Site Reliability Objectives.
 
-    To correct this we can instruct NodeJS to wait for the call to DynamoDB to return, this will prevent any further processing until connectivity to DynamoDB has been confirmed.  Update the source code to add the `await` modifier to the initial call to DynamoDB:
-
+    Modify the `lambda.js` to replace the return statement around line 133 with the following:
+    
     ```javascript
-    var ddbData = await ddb.get (params).promise ();
+    callback (null, response);
     ```
 
     Reapply your Terraform template to push the source code change into AWS.
