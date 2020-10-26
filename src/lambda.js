@@ -85,8 +85,8 @@ exports.handler = failureLambda(async(event, context, callback) => {
                 MetricData: [{
                     MetricName: 'SymbolWriteCount',
                     Dimensions: [{
-                        Name: 'Symbol',
-                        Value: jsonData.symbol
+                        Name: 'DynamoDBTable',
+                        Value: chaosDataTable
                     }],
                     StorageResolution: 1,
                     Timestamp: new Date(),
