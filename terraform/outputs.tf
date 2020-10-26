@@ -34,7 +34,7 @@ resource "local_file" "steady_state_flight" {
 [
     {
         "Id": "pctFlight",
-        "Expression": "((sqsInMsgCount - sqsOutMsgCount) / sqsInMsgCount)*100",
+        "Expression": "(((2*sqsInMsgCount) - (ddbWriteCount + sqsOutMsgCount)) / (2*sqsInMsgCount))*100",
         "Label": "PercentInFlight"
     },
     {
@@ -66,6 +66,25 @@ resource "local_file" "steady_state_flight" {
                     {
                         "Name": "QueueName",
                         "Value": "${aws_sqs_queue.chaos_csv_queue.name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    },
+    {
+        "Id": "ddbWriteCount",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "ChaosTransformer",
+                "MetricName": "SymbolWriteCount",
+                "Dimensions": [
+                    {
+                        "Name": "DynamoDBTable",
+                        "Value": "${aws_dynamodb_table.chaos_data_table.name}"
                     }
                 ]
             },

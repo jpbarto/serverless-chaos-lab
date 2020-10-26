@@ -98,11 +98,12 @@ resource "aws_cloudwatch_dashboard" "chaos_board" {
             "height": 3,
             "properties": {
                 "metrics": [
-                    [ { "expression": "((m3 - m2)/m3)*100", "label": "Percent in Flight (5 min)", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
+                    [ { "expression": "(((2*m3) - (m1 + m2))/(2*m3))*100", "label": "Percent in Flight (5 min)", "id": "e1", "period": 300, "region": "${data.aws_region.current.name}" } ],
                     [ { "expression": "(m4/m3)*100", "label": "Percent in Error (5 min)", "id": "e2", "period": 300, "region": "${data.aws_region.current.name}" } ],
                     [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_csv_queue.name}", { "id": "m2", "visible": false } ],
                     [ "AWS/Lambda", "Errors", "FunctionName", "${aws_lambda_function.chaos_lambda.function_name}", { "id": "m4", "visible": false } ],
-                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_json_queue.name}", { "id": "m3", "visible": false } ]
+                    [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${aws_sqs_queue.chaos_json_queue.name}", { "id": "m3", "visible": false } ],
+                    [ "ChaosTransformer", "SymbolWriteCount", "DynamoDBTable", "${aws_dynamodb_table.chaos_data_table.name}", {"id": "m1", "visible": false}]
                 ],
                 "view": "timeSeries",
                 "region": "${data.aws_region.current.name}",
