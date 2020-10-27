@@ -120,7 +120,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
             "name": "messages-in-flight",
             "tolerance": {
                 "type": "range",
-                "range": [-10.0, 40.0],
+                "range": [-10.0, 80.0],
                 "target": "stdout"
             },
             "provider": {
@@ -179,7 +179,7 @@ Take a moment and consider the many ways that your ETL architecture could go wro
                "arguments": "ssm put-parameter --name failureLambdaConfig --type String --overwrite --value '{\"isEnabled\": true, \"failureMode\": \"latency\", \"rate\": 0.5, \"minLatency\": 3000, \"maxLatency\": 5000}'"
            },
            "pauses": {
-               "after": 360
+               "after": 300
            }
        }
    ],
