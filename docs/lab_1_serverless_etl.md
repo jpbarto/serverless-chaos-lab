@@ -83,7 +83,9 @@ Files are now being sent to Amazon S3, the entry point of your ETL pipeline.  Up
 
 When a file is encountered by the ETL Lambda function which it cannot parse it will experience an exception.  S3 will invoke the Lambda function 2 more times in an effort to parse the file, if all 3 invocations experience an error the message will be stored into the dead letter queue configured for the Lambda function.
 
-An [Amazon CloudWatch Dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:) has been created for this pipeline which tracks various metrics for the architecture.  Please use this to gain insight into the current state of the pipeline.
+To define and measure the steady state what metrics should be collected? And how should those metrics be used to produce indicators for the health of the ETL system? Is it helpful to measure the number of objects arriving into S3, or the number of Lambda errors that have occurred? What data do you need to produce (service level indicators)[https://devopsinstitute.com/choosing-the-right-service-level-indicators/], and what service level indicators should be monitored?
+
+An [Amazon CloudWatch Dashboard](https://console.aws.amazon.com/cloudwatch/home?#dashboards:) has been created for this pipeline which tracks various metrics for the architecture and defines a few SLIs.  Please use this to gain insight into the current state of the pipeline.
 
 ## Summary
 
