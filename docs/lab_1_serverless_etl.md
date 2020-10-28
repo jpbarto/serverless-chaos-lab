@@ -51,7 +51,7 @@ After deploying the architecture you will use drivers to publish and consume JSO
 
 1. Review the DynamoDB table created using the [AWS DynamoDB console](https://console.aws.amazon.com/dynamodb/home?#tables:).
 
-    The table will be named something like `chaos-data-1234ABCD`.  It is unlikely to have any data in it yet as we have yet put any files into the ETL pipeline.
+    The table will be named something like `chaos-data-1234ABCD`.  It is unlikely to have any data in it yet as you have yet to put any files into the ETL pipeline.
 
 1. Review the [SQS queues](https://console.aws.amazon.com/sqs/home?#) and [SNS topics](https://console.aws.amazon.com/sns/v3/home?#/topics) that were created.  Note any triggers associated with the queues and topics.
 
@@ -59,7 +59,7 @@ After deploying the architecture you will use drivers to publish and consume JSO
 
     There should be a single SNS topic named something like `chaos-csv-notification-topic-1234ABCD`.
 
-1. Also visit the [S3 console](https://s3.console.aws.amazon.com/s3/home?) and find the bucket named something like `chaos-bucket-1234ABCD`.
+1. Also visit the [S3 console](https://s3.console.aws.amazon.com/s3/home?) and find the bucket named something like `chaos-bucket-1234ABCD`.  Notice the triggers that are configured to integrate S3 with SQS and SNS.
 
 ## Apply a load
 
