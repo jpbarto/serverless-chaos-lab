@@ -76,15 +76,15 @@ Let's now download and deploy a serverless application that we can iterate on an
     ```
 
 1. If Terraform is not already installed, [install HashiCorp Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) in your local environment.
-    
-    If you are use an [AWS Cloud9 IDE](https://aws.amazon.com/cloud9/) instance the following should install Terraform for you:
+   > Note: These labs require Terraform v12 or higher.
+ 
+ 
+   If you are using an [AWS Cloud9 IDE](https://aws.amazon.com/cloud9/) instance the following should install Terraform for you:
     ```bash
     $ sudo yum install -y yum-utils
     $ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
     $ sudo yum -y install terraform
     ```
-
-    > Note: These labs require Terraform v12 or higher.
 
 1. To package the Lambda function, Terraform will need to use NPM and NodeJS.  If NodeJS and NPM are not already installed please [install them](https://nodejs.org/en/download/) into your environment.
 
