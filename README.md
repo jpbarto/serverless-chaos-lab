@@ -121,11 +121,11 @@ With the above completed you're now ready to embark on a series of hands-on labs
 
     (Key objective: Using Chaos Toolkit define an experiment and execute to inject latency, fix the architecture to maintain SLO in the face of latency)
 
-1. [Author a second chaos experiment](docs/lab_4_chaos_experiment_2.md)
+1. [Simulate a serverless service disruption](docs/lab_4_chaos_experiment_2.md)
 
-    Not all chaos can be mitigated in code, sometimes a human has to get involved.  In this lab you will assume that an unforseen event has occurred, disrupting your SLO and requiring your team's intervention.  But how will you know that the system needs your help?  In this lab you will design a new chaos experiment to force an unknown failure and enable an alarm to trigger, notifying you of when the unexpected happens.
+    In this lab you will introduce a different type of fault to simulate a permissions issue or a service outtage.
 
-    (Key objective: Using Chaos Toolkit define an experiment and execute to inject unknown error.  Enable an alarm to trigger when the SLO is compromised)
+    (Key objective: Using Chaos Toolkit define an experiment and execute it to simulate a service disruption.)
 
 ## FAQ
 1. **When running the Chaos Toolkit the probes fail even without disrupting the system, what is happening?**
