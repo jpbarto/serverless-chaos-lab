@@ -2,7 +2,7 @@
 
 ## Overview
 
-In this lab you will use the [failure-lambda](https://www.npmjs.com/package/failure-lambda) NPM package to inject failures into the AWS Lambda function of your ETL architecture.
+In this lab you will use the [Failure-Lambda](https://www.npmjs.com/package/failure-lambda) NPM package to inject failures into the AWS Lambda function of your ETL architecture.
 
 ## Failure-Lambda
 
@@ -16,7 +16,7 @@ A challenge with serverless services like DynamoDB, SQS, and Lambda is that you 
  - artificial exceptions
  - return a specific response code
 
-If you review the [code](../src/lambda.js) for your AWS Lambda function you will note that it already has the failure-lambda wrapper in place.  The Lambda function also has an environment variable defined which points at an key-value pair in AWS Parameter Store.  Have a look at the [AWS Lambda console](https://console.aws.amazon.com/lambda/home?#/functions) to find the name of the parameter and then review the current value of the parameter in the [Parameter Store console](https://console.aws.amazon.com/systems-manager/parameters?).
+If you review the [code](../src/lambda.js) for your AWS Lambda function you will note that it already has the Failure-Lambda wrapper in place.  The Lambda function also has an environment variable defined which points at a key-value pair in AWS Parameter Store.  Have a look at the [AWS Lambda console](https://console.aws.amazon.com/lambda/home?#/functions) to find the name of the parameter and then review the current value of the parameter in the [Parameter Store console](https://console.aws.amazon.com/systems-manager/parameters?).
 
 ## Test your Lambda Function
 
@@ -26,7 +26,7 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
 
 1. Define the event body
 
-    Give the event a name such as `TestObject001` and use the following JSON.  Be sure and modify the JSON replacing the two occurrences of `< YOUR S3 BUCKET NAME >` with the name of your S3 bucket.
+    Give the event a name such as `TestObject001` and use the following JSON.  Be sure and modify the JSON replacing the two occurrences of `< YOUR S3 BUCKET NAME >` with the name of the S3 bucket created in the first lab.
 
     ```json
     {
@@ -53,7 +53,7 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
 
 1. Perform a successful test
 
-    Before we start injecting failures lets ensure your function is testing normally.  Click the `Test` button with your new test event defined.  The results should result in a `Succeeded` status.
+    Before we start injecting failures lets ensure your function is testing normally.  Click the `Test` button with your new test event defined.  The test should result in a `Succeeded` status.
 
 1. Configure Failure-Lambda for latency injection
 
@@ -88,7 +88,7 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
     }
     ```
 
-    This configuration will cause failure-lambda to, 100% of the time, disallow any network communication with the DynamoDB service in any AWS region.
+    This configuration will cause Failure-Lambda to, 100% of the time, disallow any network communication with the DynamoDB service in any AWS region.
 
 1. Execute the network impaired Lambda function
 
@@ -108,4 +108,4 @@ If you review the [code](../src/lambda.js) for your AWS Lambda function you will
 
 In this lab you learned about the Failure-Lambda NodeJS library and how it can be used to inject artificial failures and disruption into your Lambda functions.
 
-In [the next lab](lab_3_chaos_experiment.md) you will craft your first chaos experiment which will use the failure-lambda library to perturb your ETL architecture and observe the system's ability to perform in turbulent conditions.
+In [the next lab](lab_3_chaos_experiment.md) you will craft your first chaos experiment which will use the Failure-Lambda library to perturb your ETL architecture and observe the system's ability to perform in turbulent conditions.
