@@ -98,6 +98,76 @@ resource "local_file" "steady_state_flight" {
 EOF
 }
 
+resource "local_file" "steady_state_complete" {
+    filename = "${path.module}/../chaos/steadyStateComplete.json"
+    content = <<EOF
+[
+    {
+        "Id": "pctComplete",
+        "Expression": "(ddbWriteCount / sqsOutMsgCount)*100",
+        "Label": "PercentComplete"
+    },
+    {
+        "Id": "sqsInMsgCount",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/SQS",
+                "MetricName": "NumberOfMessagesSent",
+                "Dimensions": [
+                    {
+                        "Name": "QueueName",
+                        "Value": "${aws_sqs_queue.chaos_json_queue.name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    },
+    {
+        "Id": "sqsOutMsgCount",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "AWS/SQS",
+                "MetricName": "NumberOfMessagesSent",
+                "Dimensions": [
+                    {
+                        "Name": "QueueName",
+                        "Value": "${aws_sqs_queue.chaos_csv_queue.name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    },
+    {
+        "Id": "ddbWriteCount",
+        "MetricStat": {
+            "Metric": {
+                "Namespace": "ChaosTransformer",
+                "MetricName": "SymbolWriteCount",
+                "Dimensions": [
+                    {
+                        "Name": "DynamoDBTable",
+                        "Value": "${aws_dynamodb_table.chaos_data_table.name}"
+                    }
+                ]
+            },
+            "Period": 300,
+            "Stat": "Sum",
+            "Unit": "Count"
+        },
+        "ReturnData": false
+    }
+]
+EOF
+}
+
 resource "local_file" "steady_state_error" {
   filename = "${path.module}/../chaos/steadyStateError.json"
   content = <<EOF
