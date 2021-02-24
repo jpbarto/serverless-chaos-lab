@@ -2,15 +2,15 @@
 
 ## Objective
 
-In this lab you will learn about [Chaos-Toolkit](https://chaostoolkit.org/) and script it to test your serverless architecture.  You will cover how to design a chaos experiment and then put it into practice to improve your ETL pipeline.
+In this lab you will learn about [Chaos Toolkit](https://chaostoolkit.org/) and script it to test your serverless architecture.  You will cover how to design a chaos experiment and then put it into practice to improve your ETL pipeline.
 
-## Chaos-Toolkit
+## Chaos Toolkit
 
-The [Chaos Toolkit](https://chaostoolkit.org/) aims to be the simplest and easiest way to explore building your own Chaos Engineering Experiments. It also aims to define a vendor and technology independent way of specifying Chaos Engineering experiments by providing an Open API.
+The [Chaos Toolkit](https://chaostoolkit.org/) aims to be the simplest and easiest way to explore building your own Chaos Engineering Experiments. It also aims to define a vendor and technology independent way of specifying chaos engineering experiments by providing an open API.
 
 It uses a declaritive and extensible format for specifying and scripting chaos experiments.  This allows you to automate chaos engineering and incorporate experiments into your CI/CD pipelines.
 
-The toolkit also has been [extended](https://chaostoolkit.org/extensions) to allow it to support, out of the box, the ability to interact with major cloud computing providers, Kubernetes, Spring and Spring Boot, and many others.  
+The toolkit also has been [extended](https://chaostoolkit.org/extensions) to allow it to support, out of the box, the ability to interact with major cloud computing providers, Kubernetes, Spring, Spring Boot, and many others.  
 
 To get started learning more about Chaos Toolkit please visit their [documentation](https://docs.chaostoolkit.org/).
 
