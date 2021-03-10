@@ -33,10 +33,10 @@ POLICY
 #########################################
 
 resource "aws_sqs_queue" "chaos_json_queue" {
-  name = "chaos-json-work-queue-${random_id.chaos_stack.hex}"
+  name                       = "chaos-json-work-queue-${random_id.chaos_stack.hex}"
   visibility_timeout_seconds = 180
 
-  policy = <<EOL
+  policy         = <<EOL
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -63,12 +63,12 @@ EOL
 }
 
 resource "aws_sqs_queue" "chaos_error_queue" {
-  name = "chaos-error-queue-${random_id.chaos_stack.hex}"
+  name                       = "chaos-error-queue-${random_id.chaos_stack.hex}"
   visibility_timeout_seconds = 180
 }
 
 resource "aws_sqs_queue" "chaos_csv_queue" {
-  name = "chaos-csv-work-queue-${random_id.chaos_stack.hex}"
+  name                       = "chaos-csv-work-queue-${random_id.chaos_stack.hex}"
   visibility_timeout_seconds = 180
 }
 

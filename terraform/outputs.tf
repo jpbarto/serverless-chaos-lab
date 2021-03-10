@@ -30,7 +30,7 @@ EOF
 
 resource "local_file" "steady_state_flight" {
   filename = "${path.module}/../chaos/steadyStateFlight.json"
-  content = <<EOF
+  content  = <<EOF
 [
     {
         "Id": "pctFlight",
@@ -99,8 +99,8 @@ EOF
 }
 
 resource "local_file" "steady_state_complete" {
-    filename = "${path.module}/../chaos/steadyStateComplete.json"
-    content = <<EOF
+  filename = "${path.module}/../chaos/steadyStateComplete.json"
+  content  = <<EOF
 [
     {
         "Id": "pctComplete",
@@ -170,7 +170,7 @@ EOF
 
 resource "local_file" "steady_state_error" {
   filename = "${path.module}/../chaos/steadyStateError.json"
-  content = <<EOF
+  content  = <<EOF
 [
     {
         "Id": "pctError",
