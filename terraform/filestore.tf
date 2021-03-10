@@ -6,6 +6,14 @@
 
 resource "aws_s3_bucket" "chaos_bucket" {
   bucket = "chaos-bucket-${random_id.chaos_stack.hex}"
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_public_access_block" "example" {
+  bucket = aws_s3_bucket.chaos_bucket.id
+
+  block_public_acls   = true
+  block_public_policy = true
 }
 
 output "chaos_bucket_name" {
