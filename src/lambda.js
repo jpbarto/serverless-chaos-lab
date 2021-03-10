@@ -1,10 +1,16 @@
+// require the UUID module to generate unique identifiers
+const { v4: uuidv4 } = require('uuid');
+
 // require the failure-lambda wrapper to support Chaos Engineering
 const failureLambda = require('failure-lambda');
 
 // require the AWS SDK to communicate with S3 and DynamoDB
 var AWS = require('aws-sdk');
+
 // require json2csv to parse the JSON files published to S3
 const { parse } = require('json2csv');
+
+var lambdaInstanceId = uuidv4();
 
 const fields = ['objectName', 'submissionDate', 'author', 'formatVersion'];
 const opts = { "fields": fields };
@@ -16,7 +22,7 @@ var cloudwatch = new AWS.CloudWatch();
 var chaosDataTable = process.env.CHAOS_DATA_TABLE;
 
 exports.handler = failureLambda(async(event, context, callback) => {
-    console.log('ETL processor handling event', JSON.stringify(event));
+    console.log('Lambda instance ID:', lambdaInstanceId, ': v1 ETL processor handling event', JSON.stringify(event));
 
     var s3Event = JSON.parse(event.Records[0].body);
     console.log('Extracted S3 event', JSON.stringify(s3Event));
@@ -49,6 +55,7 @@ exports.handler = failureLambda(async(event, context, callback) => {
         },
         ReturnValues: "UPDATED_NEW"
     };
+
     ddb.update(params, function(err, data) {
         if (err) {
             console.error("Unable to update", jsonData.symbol, "aggregate record in DynamoDB, Error JSON:", JSON.stringify(err, null, 2));
@@ -80,7 +87,7 @@ exports.handler = failureLambda(async(event, context, callback) => {
         }
         else {
             console.log("Recorded", jsonData.symbol, "message ID", jsonData.messageId, "in DynamoDB", JSON.stringify(data, null, 2));
-            
+
             var cwParams = {
                 MetricData: [{
                     MetricName: 'SymbolWriteCount',
@@ -99,8 +106,9 @@ exports.handler = failureLambda(async(event, context, callback) => {
             cloudwatch.putMetricData(cwParams, function(err, data) {
                 if (err) {
                     console.log("Error logging custom metrics:", err, err.stack);
-                } else {
-                    console.log("Successfully logged custom metric update:", data); 
+                }
+                else {
+                    console.log("Successfully logged custom metric update:", data);
                 }
             });
 

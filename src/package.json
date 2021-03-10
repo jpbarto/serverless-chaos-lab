@@ -6,7 +6,8 @@
   "dependencies": {
     "aws-sdk": "^2.619.0",
     "failure-lambda": "^0.4.1",
-    "json2csv": "^4.5.4"
+    "json2csv": "^4.5.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {},
   "scripts": {
